@@ -19,13 +19,10 @@ class NeuralNetwork:
       self.sqerror = 0
       self.threshold = threshold
 
-      # w and delta don't contain the input layer.
+      # w and beta don't contain the input layer. (This is what characterizes the NN)
       self.w = [np.random.uniform(-0.5, 0.5, (input_size, input_size)) for layer in range(layers-2)]
       self.w.append(np.random.uniform(-0.5, 0.5, (output_size, input_size)))
-      
-      self.delta = [np.zeros(input_size) for layer in range(layers-2)]
-      self.delta.append(np.zeros(output_size))
-      
+
       self.beta = [np.random.uniform(-0.5, 0.5, (input_size, input_size)) for layer in range(layers-2)]
       self.beta.append(np.random.uniform(-0.5, 0.5, (output_size, input_size)))
 
@@ -33,20 +30,27 @@ class NeuralNetwork:
       # a containt the input layer output.
       self.a = [np.zeros((1,input_size)) for layer in range(layers-1)]
       self.a.append(np.zeros((1,output_size)))
-      
+
+      # gradient of cost function
+      self.delta =  list(self.a)
+
+      # derivative of the activation function
+      self.d_a = list(self.a)
+
       print("A = {}".format(self.a))
+      print("A' = {}".format(self.d_a))
       print(self)
 
 
    def apply_activation_function(self, x_array):
       for xi in np.nditer(x_array, op_flags=['readwrite']):
-         x_array[...] = activation_function(xi)
+         x_array[...] = self.activation_function(xi)
 
       return x_array
 
    def apply_d_activation_function(self, x_array):
       for xi in np.nditer(x_array, op_flags=['readwrite']):
-         x_array[...] = d_activation_function(xi)
+         x_array[...] = self.d_activation_function(xi)
 
       return x_array
 
@@ -56,7 +60,6 @@ class NeuralNetwork:
    def d_sigmoid(self, x):
       return self.sigmoid(x)* (1 + self.sigmoid(x))
    
-
    ''' If you want to change the activation 
        function you need only to change the following two functions.
        tau(zl) [activation_function] and tau'(zl) [d_activation_function].
@@ -114,6 +117,30 @@ class NeuralNetwork:
       x = example[:(col-output_size)].reshape(input_size, 1)
       y = example[(col-output_size):].reshape(output_size, 1)
 
+      self.update_neuron_outputs(x,y)
+
+      # calculate the error in the output layer
+      g = self.cost_function_gradient(y, self.a[len(self.a)-1])
+
+      self.delta[len(self.delta)-1] = g * self.d_a[len(self.d_a)-1]
+
+      print("============================================")
+      print("Network Status")
+      print("============================================")
+
+      print("X = {}, y = {}".format(x, y))
+      print("A = {}".format(self.a))
+      print(self)
+      print("++++++++++++++++++++++++++++++++++++++++++++")
+      print("Y: {}, ŷ: {}".format(y, self.a[len(self.a)-1]))
+      print("VC: {}".format(g))
+      print("tau'(z_L): {}".format(self.d_a[len(self.d_a)-1]))
+      print("tau'(z_L): {}".format(self.delta[len(self.delta)-1]))
+      print("============================================")
+
+
+   def update_neuron_outputs(self, x, y):
+      
       self.a[0] = x
 
       for previous_layer, w_i in enumerate(self.w):
@@ -128,21 +155,19 @@ class NeuralNetwork:
          print("A = {}".format(self.a[previous_layer]))
          print("W = {}".format(w_i))
 
-         z_l = np.matmul(w_i,self.a[previous_layer]) #+ self.beta[previous_layer] 
+         z_l = np.matmul(w_i,self.a[previous_layer]) + self.beta[previous_layer] 
          
          # apply activation function (generally sigmoide)
          print("zl = {}".format(z_l))
-         self.a[layer] = np.apply_along_axis(self.activation_function, axis=1, arr=z_l)
+         
+         self.a[layer] = self.apply_activation_function(z_l)
+
+         self.d_a[layer] = self.apply_d_activation_function(z_l)
 
 
-      print("============================================")
-      print("Network Status")
-      print("============================================")
+   def cost_function_gradient(self, y, output):
+      return y - output
 
-      print("X = {}, y = {}".format(x, y))
-      print("A = {}".format(self.a))
-      print(self)
-      print("============================================")
 
    '''
       classify: apply the neural network over the given input
