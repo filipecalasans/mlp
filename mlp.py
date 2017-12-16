@@ -31,11 +31,13 @@ class NeuralNetwork:
       self.a = [np.zeros((1,input_size)) for layer in range(layers-1)]
       self.a.append(np.zeros((1,output_size)))
 
-      # gradient of cost function
-      self.delta =  list(self.a)
-
       # derivative of the activation function
       self.d_a = list(self.a)
+
+      # delta[L] = (y - ŷ) * d_a[L]     ===> output layer Lth depth network
+      # delta[l] = w[l+1]*delta[l+1] (o) d_a[l] ===> Hidden layers - 
+      # where (o) is the Hadamard product
+      self.delta =  list(self.a)
 
       print("A = {}".format(self.a))
       print("A' = {}".format(self.d_a))
