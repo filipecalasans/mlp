@@ -23,13 +23,13 @@ class NeuralNetwork:
       self.w = [np.random.uniform(-0.5, 0.5, (input_size, input_size)) for layer in range(layers-2)]
       self.w.append(np.random.uniform(-0.5, 0.5, (output_size, input_size)))
 
-      self.beta = [np.random.uniform(-0.5, 0.5, (input_size, input_size)) for layer in range(layers-2)]
-      self.beta.append(np.random.uniform(-0.5, 0.5, (output_size, input_size)))
+      self.beta = [np.random.uniform(-0.5, 0.5, (input_size, 1)) for layer in range(layers-2)]
+      self.beta.append(np.random.uniform(-0.5, 0.5, (output_size, 1)))
 
       # a = [[x1, x2, ..., xn], [a_11, a1_2, ..., a_1n], .... [a_L1, a_L2, ..., a_Ln]]
       # a containt the input layer output.
-      self.a = [np.zeros((1,input_size)) for layer in range(layers-1)]
-      self.a.append(np.zeros((1,output_size)))
+      self.a = [np.zeros((input_size, 1)) for layer in range(layers-1)]
+      self.a.append(np.zeros((output_size, 1)))
 
       # derivative of the activation function
       self.d_a = list(self.a)
@@ -39,8 +39,6 @@ class NeuralNetwork:
       # where (o) is the Hadamard product
       self.delta =  list(self.a)
 
-      print("A = {}".format(self.a))
-      print("A' = {}".format(self.d_a))
       print(self)
 
 
@@ -130,41 +128,61 @@ class NeuralNetwork:
       print("Network Status")
       print("============================================")
 
-      print("X = {}, y = {}".format(x, y))
+      print("X = {}, Y = {}".format(x, y))
       print("A = {}".format(self.a))
       print(self)
       print("++++++++++++++++++++++++++++++++++++++++++++")
-      print("Y: {}, ŷ: {}".format(y, self.a[len(self.a)-1]))
-      print("VC: {}".format(g))
-      print("tau'(z_L): {}".format(self.d_a[len(self.d_a)-1]))
-      print("tau'(z_L): {}".format(self.delta[len(self.delta)-1]))
+      print(self.network_status())
       print("============================================")
 
 
    def update_neuron_outputs(self, x, y):
       
+      '''
+         A[l] = activation(Z[l])
+         Z[l] = W[l] * A[l-1] + beta[l]
+      
+         *Inputs and outputs are handle as vertical matrices. (i.e)
+         X = transpose(<x1, x2, ... xn>)
+         Y = transpose(<y1, y2, ..., ym>)
+         
+         resulting on neuron output vertical matrices (i.e)
+         A = transpose(<a1, a2, ..., an>) for each hidden layer
+         Z = transpose<z1, z2, ..., zn>) for each hidden layer
+         DELTA = transpose<delta_1, delta_2, ..., delta_n>)
+
+         A = transpose(<a1, a2, ..., am>) for each output layer
+         Z = transpose<z1, z2, ..., zm>) for each output layer
+         DELTA = transpose<delta_1, delta_2, ..., delta_m>)
+      '''
       self.a[0] = x
 
-      for previous_layer, w_i in enumerate(self.w):
+      for layer, w_i in enumerate(self.w):
          
          # self.w do not consider the input layer, so add 1.
-         layer = previous_layer + 1
+         # We want to update the neuron ouput of the layer(l),
+         # so we calculate the activation output using the inputs from the (l-1)
+         # and beta from the lth layer.
+         output_index = layer + 1
          print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
          print("Calculating Layer {}".format(layer))
          print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
 
          # apply weights and beta on the previous layer output values. 
-         print("A = {}".format(self.a[previous_layer]))
+         print("A = {}".format(self.a[layer]))
          print("W = {}".format(w_i))
 
-         z_l = np.matmul(w_i,self.a[previous_layer]) + self.beta[previous_layer] 
+         # *** beta is indexed as W - we do not consider the w 
+         # from the input layer (Indentity Matrix) neither the beta
+         # from the input layer.
+         z_l = np.matmul(w_i,self.a[layer]) + self.beta[layer] 
          
          # apply activation function (generally sigmoide)
          print("zl = {}".format(z_l))
          
-         self.a[layer] = self.apply_activation_function(z_l)
+         self.a[output_index] = self.apply_activation_function(z_l)
 
-         self.d_a[layer] = self.apply_d_activation_function(z_l)
+         self.d_a[output_index] = self.apply_d_activation_function(z_l)
 
 
    def cost_function_gradient(self, y, output):
@@ -180,7 +198,12 @@ class NeuralNetwork:
       pass  
 
    def __str__(self):
-      return "Weights:\n{}\nDelta:\n{}".format(self.w, self.delta)
+      return "Weights:\n{}\Beta:\n{}".format(self.w, self.beta)
+
+   def network_status(self):
+      return ("DELTA: {}\n".format(self.delta) + 
+         "tau(z): {}\n".format(self.a) +
+         "tau'(z): {}\n".format(self.d_a))
 
 
 if __name__ == "__main__":
