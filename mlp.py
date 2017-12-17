@@ -189,29 +189,27 @@ class NeuralNetwork:
 
       for layer, w_i in enumerate(self.w):
          
-         # self.w do not consider the input layer, so add 1.
+         # self.w doesn't consider the input layer, so add 1.
          # We want to update the neuron ouput of the layer(l),
-         # so we calculate the activation output using the inputs from the (l-1)
+         # so we calculate the activation output using inputs from (l-1) layer
          # and beta from the lth layer.
          output_index = layer + 1
          print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
          print("Calculating Layer {}".format(layer))
          print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
 
-         # apply weights and beta on the previous layer output values. 
+         # apply weights and beta on the previous layer output. 
          print("A = {}".format(self.a[layer]))
          print("W = {}".format(w_i))
+         print("B = {}".format(self.b[layer]))
 
          # *** beta is indexed as W - we do not consider the w 
          # from the input layer (Indentity Matrix) neither the beta
          # from the input layer.
          z_l = np.matmul(w_i,self.a[layer]) + self.beta[layer] 
          
-         # apply activation function (generally sigmoide)
-         print("zl = {}".format(z_l))
-         
+         # apply activation function (default is sigmoide)   
          self.a[output_index] = self.apply_activation_function(z_l)
-
          self.d_a[output_index] = self.apply_d_activation_function(z_l)
 
 
