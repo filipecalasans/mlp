@@ -37,7 +37,7 @@ class NeuralNetwork:
          exit()
 
       for l in range(len(layer_size)-1):
-         # w and beta don't contain the input layer. (These matrices are what characterizes the NN)
+         # w and beta don't contain the input layer. (These matrices characterize the NN)
          # print((layer_size[l+1], layer_size[l]))
          self.w.append(np.random.uniform(-1.5, 1.5, (layer_size[l+1], layer_size[l])))
          self.beta.append(np.random.uniform(-1.5, 1.5, (layer_size[l+1], 1)))
@@ -349,12 +349,12 @@ if __name__ == "__main__":
    input_size = dataset.shape[1] - 1 
    output_size = 1
 
-   nn_size = [input_size, 3, output_size]
+   nn_size = [input_size, 4, output_size]
 
    print("DataSet: {}".format(dataset))
    print("NN SIZE {}".format(nn_size))
 
-   mlp = NeuralNetwork(nn_size, eta=0.1, max_iterations=10, threshold=0.1)
+   mlp = NeuralNetwork(nn_size, eta=0.1, max_iterations=1000, threshold=0.1)
    
    outputs, output = mlp.classify(np.array([0,0]))
    
