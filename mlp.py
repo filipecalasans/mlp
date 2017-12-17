@@ -143,11 +143,9 @@ class NeuralNetwork:
 
       self.update_neuron_outputs(x,y)
 
-      # calculate the error in the output layer
-      g = self.cost_function_gradient(y, self.a[len(self.a)-1])
-
-      self.delta[len(self.delta)-1] = g * self.d_a[len(self.d_a)-1]
-
+      # Update the error matrices
+      self.update_error(y)
+      
       print("============================================")
       print("Network Status")
       print("============================================")
@@ -201,7 +199,7 @@ class NeuralNetwork:
          # apply weights and beta on the previous layer output. 
          print("A = {}".format(self.a[layer]))
          print("W = {}".format(w_i))
-         print("B = {}".format(self.b[layer]))
+         print("B = {}".format(self.beta[layer]))
 
          # *** beta is indexed as W - we do not consider the w 
          # from the input layer (Indentity Matrix) neither the beta
@@ -212,6 +210,37 @@ class NeuralNetwork:
          self.a[output_index] = self.apply_activation_function(z_l)
          self.d_a[output_index] = self.apply_d_activation_function(z_l)
 
+
+   def update_error(self, y):
+      
+      '''
+         Error in the output layer (Lth layer) is given by:
+            delta[L] = (Y - Ŷ) * A'(Z[L]) or
+            delta[L] = (Y - Ŷ) * Tau'(Z[L])
+
+         Error in the hidden layers are:
+            delta[l] = (w[l+1] * delta[l+1]) (o) Tau'(Z[l]) or 
+            delta[l] = (w[l+1] * delta[l+1]) (o) A'(Z[l])
+            
+            where,  (o) is the Hadamard Product operator [apply multiplication element wise].
+                 , A' = Tau' (samething) 
+      '''
+      # calculate the error in the output layer
+      self.delta[len(self.delta)-1] = (y - self.a[len(self.a)-1]) * self.d_a[len(self.d_a)-1]
+
+      # backpropagate the error through the network.
+      self.backpropagate()
+
+
+   def backpropagate(self):
+      
+      output_layer = len(self.w)-1
+      
+      # loop from [output_layer-1 ... 0]
+      # Remember Layer 0 in the W array is the first hidden layer
+      for l in range(output_layer-1, -1, -1):
+         # apply_d_activation_function operates inplace
+         self.delta[l] = np.matmul(self.w[l], self.delta[l+1])*self.d_a[l]
 
    '''
       classify: apply the neural network over the given input
