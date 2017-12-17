@@ -19,50 +19,74 @@ class NeuralNetwork:
       self.sqerror = 0
       self.threshold = threshold
 
-      # w and beta don't contain the input layer. (This is what characterizes the NN)
+      # w and beta don't contain the input layer. (These matrices are what characterizes the NN)
       self.w = [np.random.uniform(-0.5, 0.5, (input_size, input_size)) for layer in range(layers-2)]
       self.w.append(np.random.uniform(-0.5, 0.5, (output_size, input_size)))
 
       self.beta = [np.random.uniform(-0.5, 0.5, (input_size, 1)) for layer in range(layers-2)]
       self.beta.append(np.random.uniform(-0.5, 0.5, (output_size, 1)))
 
-      # a = [[x1, x2, ..., xn], [a_11, a1_2, ..., a_1n], .... [a_L1, a_L2, ..., a_Ln]]
-      # a containt the input layer output.
+      # a = [[x1, x2, ..., xn].T, [a_11, a1_2, ..., a_1n].T, .... [a_L1, a_L2, ..., a_Ln].T]
+      # vector list contains the input layer output vector, which is equal to the 
+      # input vector for a given example.
       self.a = [np.zeros((input_size, 1)) for layer in range(layers-1)]
       self.a.append(np.zeros((output_size, 1)))
 
       # derivative of the activation function
       self.d_a = list(self.a)
 
-      # delta[L] = (y - ŷ) * d_a[L]     ===> output layer Lth depth network
-      # delta[l] = w[l+1]*delta[l+1] (o) d_a[l] ===> Hidden layers - 
+      # delta[L] = (y - ŷ) * d_a[L]     ===> for the output layer in a L-depth network
+      # delta[l] = w[l+1]*delta[l+1] (o) d_a[l] ===> for the Hidden layers
       # where (o) is the Hadamard product
       self.delta =  list(self.a)
 
       print(self)
 
-
+   # Hadamard Product of the activation function (Tau) over the
+   # net vector. net vector is the vector Z[l]
+   # where Z[l] = W[l] * A[l-1] + beta[l]
+   # Activation function A[L].
+   # Where A = Tau(Z)
    def apply_activation_function(self, x_array):
       for xi in np.nditer(x_array, op_flags=['readwrite']):
          x_array[...] = self.activation_function(xi)
 
       return x_array
-
+   
+   '''
+   Hadamard Product of the derivative activation function (Tau') over the
+   net vector. A[L]
+   
+   net vector is the vector Z[l]
+   where Z[l] = W[l] * A[l-1] + beta[l]
+   
+    Where A = Tau(Z)
+    d_A = Tau'(Z)
+   '''
    def apply_d_activation_function(self, x_array):
       for xi in np.nditer(x_array, op_flags=['readwrite']):
          x_array[...] = self.d_activation_function(xi)
 
       return x_array
-
+   
+   '''
+      Default activation function 
+   '''
    def sigmoid(self, x):
       return 1/(1+math.exp(-x))
-
+   
+   '''
+      Default activation function derivative 
+   '''
    def d_sigmoid(self, x):
       return self.sigmoid(x)* (1 + self.sigmoid(x))
    
    ''' If you want to change the activation 
-       function you need only to change the following two functions.
+       function, you need only to change the following two functions.
        tau(zl) [activation_function] and tau'(zl) [d_activation_function].
+
+       @x: float value.
+
    '''
    def activation_function(self, x):
       return self.sigmoid(x)
@@ -113,7 +137,7 @@ class NeuralNetwork:
 
       # print("# col: {}".format(col))
 
-      # [x1, x2, ..., xn, 1]
+      # transpose([x1, x2, ..., xn, 1])
       x = example[:(col-output_size)].reshape(input_size, 1)
       y = example[(col-output_size):].reshape(output_size, 1)
 
@@ -139,9 +163,13 @@ class NeuralNetwork:
    def update_neuron_outputs(self, x, y):
       
       '''
-         A[l] = activation(Z[l])
+         for each layer we have: 
+
+         A[l] = Tau(Z[l])
          Z[l] = W[l] * A[l-1] + beta[l]
-      
+
+         where Tau is the activation function used.
+
          *Inputs and outputs are handle as vertical matrices. (i.e)
          X = transpose(<x1, x2, ... xn>)
          Y = transpose(<y1, y2, ..., ym>)
@@ -151,9 +179,11 @@ class NeuralNetwork:
          Z = transpose<z1, z2, ..., zn>) for each hidden layer
          DELTA = transpose<delta_1, delta_2, ..., delta_n>)
 
-         A = transpose(<a1, a2, ..., am>) for each output layer
+         A = transpose(<y1, y2, ..., ym>) for each output layer
          Z = transpose<z1, z2, ..., zm>) for each output layer
          DELTA = transpose<delta_1, delta_2, ..., delta_m>)
+
+         remembering that A[0] = X = transpose(<x1, x2, ..., xn>) for input layer.
       '''
       self.a[0] = x
 
@@ -183,10 +213,6 @@ class NeuralNetwork:
          self.a[output_index] = self.apply_activation_function(z_l)
 
          self.d_a[output_index] = self.apply_d_activation_function(z_l)
-
-
-   def cost_function_gradient(self, y, output):
-      return y - output
 
 
    '''
