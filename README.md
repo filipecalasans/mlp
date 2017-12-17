@@ -10,4 +10,4 @@ the network.
    * Batch Gradient Descent
    * Mini-batch Gradient Descent
 
-* 
+* Optimize the Classify method for no-copy.
