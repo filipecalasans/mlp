@@ -232,6 +232,9 @@ class NeuralNetwork:
       self.backpropagate()
 
 
+      self.apply_learning_equation()
+
+
    def backpropagate(self):
       
       output_layer = len(self.w)-1
@@ -239,8 +242,21 @@ class NeuralNetwork:
       # loop from [output_layer-1 ... 0]
       # Remember Layer 0 in the W array is the first hidden layer
       for l in range(output_layer-1, -1, -1):
-         # apply_d_activation_function operates inplace
          self.delta[l] = np.matmul(self.w[l], self.delta[l+1])*self.d_a[l]
+
+   def apply_learning_equation(self):
+      '''
+         This is the implementation of the Gradient Descent Algorithm.
+         
+         for the output layer (L) do:
+            W(t+1)=W(t) + eta * delta[L] X
+
+         for each layer in the hidden layer:
+            W(t+1) = W(t) + eta * delta[l] * A[l-1]
+      '''
+
+
+
 
    '''
       classify: apply the neural network over the given input
@@ -248,6 +264,7 @@ class NeuralNetwork:
                [x1, x2, ... , xn]
    '''
    def classify(self, x):
+      
       pass  
 
    def __str__(self):
