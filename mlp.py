@@ -67,10 +67,9 @@ class NeuralNetwork:
    # Activation function A[L].
    # Where A = Tau(Z)
    def apply_activation_function(self, x_array):
-      for xi in np.nditer(x_array, op_flags=['readwrite']):
-         x_array[...] = self.activation_function(xi)
-
-      return x_array
+      fnet = np.vectorize(self.activation_function)
+      y = fnet(x_array)
+      return y 
    
    '''
    Hadamard Product of the derivative activation function (Tau') over the
@@ -83,10 +82,10 @@ class NeuralNetwork:
     d_A = Tau'(Z)
    '''
    def apply_d_activation_function(self, x_array):
-      for xi in np.nditer(x_array, op_flags=['readwrite']):
-         x_array[...] = self.d_activation_function(xi)
-
-      return x_array
+      d_fnet = np.vectorize(self.d_activation_function)
+      y = d_fnet(x_array)
+      return y
+      
    
    '''
       Default activation function 
@@ -98,7 +97,7 @@ class NeuralNetwork:
       Default activation function derivative 
    '''
    def d_sigmoid(self, x):
-      return self.sigmoid(x)* (1 + self.sigmoid(x))
+      return self.sigmoid(x)*(1 + self.sigmoid(x))
    
    ''' If you want to change the activation 
        function, you need only to change the following two functions.
@@ -177,7 +176,6 @@ class NeuralNetwork:
       self.backpropagate()
 
       self.apply_learning_equation()
-      
 
       # print("============================================")
       # print("Network Status")
@@ -185,9 +183,9 @@ class NeuralNetwork:
 
       # print("X = {}, Y = {}".format(x, y))
       # print(self)
-      # print("++++++++++++++++++++++++++++++++++++++++++++")
-      # print(self.network_status())
-      # print("============================================")
+      print("++++++++++++++++++++++++++++++++++++++++++++")
+      print(self.network_status())
+      print("++++++++++++++++++++++++++++++++++++++++++++")
 
    def update_neuron_outputs(self, x):
       
@@ -224,15 +222,17 @@ class NeuralNetwork:
          # and beta from the lth layer.
          output_index = layer + 1
         
-         print("layer: {}, dim(wi): {}, dim(a): {}, dim(beta): {}".format(layer, w_i.shape, self.a[layer].shape, self.beta[layer].shape))
+         # print("layer: {}, dim(wi): {}, dim(a): {}, dim(beta): {}".format(layer, w_i.shape, self.a[layer].shape, self.beta[layer].shape))
 
          # *** beta is indexed as W - we do not consider the w 
          # from the input layer (Indentity Matrix) neither the beta
          # from the input layer.
          self.a[output_index] = np.matmul(w_i,self.a[layer]) + self.beta[layer] 
          
-         # apply activation function (default is sigmoide)   
+         # apply activation function (default is sigmoide)  
+         print("Z[{}]: {}".format(output_index, self.a[output_index])) 
          self.a[output_index] = self.apply_activation_function(self.a[output_index])
+         print("A[{}]: {}".format(output_index, self.a[output_index]))
          self.d_a[output_index] = self.apply_d_activation_function(self.a[output_index])
 
 
@@ -255,7 +255,7 @@ class NeuralNetwork:
       # calculate the error in the output layer 
       # Apply activation function derivative using hadamard product operation
       self.delta[len(self.delta)-1] = error * self.d_a[len(self.d_a)-1] 
-      self.sqerror += math.pow(np.sum(error),2)/2
+      self.sqerror += math.pow(np.sum(error),2)
 
 
    def backpropagate(self):
@@ -346,10 +346,10 @@ if __name__ == "__main__":
    '''
    dataset = np.loadtxt(open(filename, "rb"), delimiter=" ")
   
-   input_size = dataset.shape[1] - 1 
+   input_size = dataset.shape[1] - 1
    output_size = 1
 
-   nn_size = [input_size, 4, output_size]
+   nn_size = [input_size, 2, output_size]
 
    print("DataSet: {}".format(dataset))
    print("NN SIZE {}".format(nn_size))
