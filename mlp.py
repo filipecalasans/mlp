@@ -3,11 +3,11 @@ import math
 
 class NeuralNetwork:
 
-   w_init_max = 1.0
-   w_init_min = -1.0
+   w_init_max = 0.5
+   w_init_min = -0.5
 
-   b_init_max = 1.0
-   b_init_min = -1.0
+   b_init_max = 0.5
+   b_init_min = -0.5
 
    '''   
       __init__: Initializes the weight array of matrices, the delta array of errors.
@@ -101,7 +101,7 @@ class NeuralNetwork:
       Default activation function derivative 
    '''
    def d_sigmoid(self, x):
-      return self.sigmoid(x)*(1 + self.sigmoid(x))
+      return self.sigmoid(x)*(1 - self.sigmoid(x))
    
    ''' If you want to change the activation 
        function, you need only to change the following two functions.
@@ -144,6 +144,10 @@ class NeuralNetwork:
          if ((self.sqerror/n) < self.threshold) or (count>max_iterations):
             break
       
+      print("##############################################")
+      print(self.training_status(n))
+      print("##############################################")
+         
       print("Training done.")
 
    '''
@@ -255,12 +259,12 @@ class NeuralNetwork:
             where,  (o) is the Hadamard Product operator [apply multiplication element wise].
                  , A' = Tau' (samething) 
       '''
-      error = (y - self.a[len(self.a)-1])
+      error = (y - self.a[-1])
 
       # calculate the error in the output layer 
       # Apply activation function derivative using hadamard product operation
-      self.delta[len(self.delta)-1] = error * self.d_a[len(self.d_a)-1] 
-      self.sqerror += math.pow(np.sum(error),2)
+      self.delta[-1] = error * self.d_a[-1] 
+      self.sqerror += np.sum(error**2)
 
 
    def backpropagate(self):
@@ -282,7 +286,7 @@ class NeuralNetwork:
          This is the implementation of the Gradient Descent Algorithm.
 
          for each layer in the hidden layer:
-            W(t+1) = W(t) - eta * delta[l] * A[l-1].T
+            W(t+1) = W(t) + eta * delta[l] * A[l-1].T
       '''
       output_layer = len(self.w)-1
 
@@ -357,16 +361,16 @@ if __name__ == "__main__":
    input_size = dataset.shape[1] - 1
    output_size = 1
 
-   nn_size = [input_size, 3, output_size]
+   nn_size = [input_size, 2, output_size]
 
    print("DataSet: {}".format(dataset))
    print("NN SIZE {}".format(nn_size))
 
-   mlp = NeuralNetwork(nn_size, eta=0.05, threshold=0.1)
+   mlp = NeuralNetwork(nn_size, eta=0.1, threshold=1e-3)
       
    # print(mlp)
    
-   mlp.train(dataset, max_iterations=10000)
+   mlp.train(dataset, max_iterations=100000)
 
    outputs, output = mlp.classify(np.array([0,0]))
    
