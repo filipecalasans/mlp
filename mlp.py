@@ -3,6 +3,12 @@ import math
 
 class NeuralNetwork:
 
+   w_init_max = 1.0
+   w_init_min = -1.0
+
+   b_init_max = 1.0
+   b_init_min = -1.0
+
    '''   
       __init__: Initializes the weight array of matrices, the delta array of errors.
          self.w = [ W_2, W_3, ..., w_(L-1), W_L]
@@ -13,7 +19,7 @@ class NeuralNetwork:
 
          * We can baypass the input layer, as the input neurons output is equal to the input values.
    '''
-   def __init__(self, layer_size=[2,3,1], eta=0.1, threshold=1e-3, max_iterations=10):
+   def __init__(self, layer_size=[2,3,1], eta=0.1, threshold=1e-3):
       
       self.layer_size = layer_size
       self.sqerror = 0
@@ -25,8 +31,6 @@ class NeuralNetwork:
       self.a = list()
       self.d_a = list()
       self.delta = list()
-
-      self.max_dataset_interation = max_iterations
       
       if(type(layer_size) is not list):
          print("layer_size must be an array describing the Network Size and Depth")
@@ -39,8 +43,8 @@ class NeuralNetwork:
       for l in range(len(layer_size)-1):
          # w and beta don't contain the input layer. (These matrices characterize the NN)
          # print((layer_size[l+1], layer_size[l]))
-         self.w.append(np.random.uniform(-1.5, 1.5, (layer_size[l+1], layer_size[l])))
-         self.beta.append(np.random.uniform(-1.5, 1.5, (layer_size[l+1], 1)))
+         self.w.append(np.random.uniform(self.w_init_min, self.w_init_max, (layer_size[l+1], layer_size[l])))
+         self.beta.append(np.random.uniform(self.b_init_min, self.b_init_max, (layer_size[l+1], 1)))
 
       print(self.w)
       print(self.beta)
@@ -111,7 +115,6 @@ class NeuralNetwork:
 
    def d_activation_function(self, x):
       return self.d_sigmoid(x)
-
    '''
       train: Test Neural Networ:
          @dataset: Numpy Matrix dataset N examples
@@ -120,7 +123,7 @@ class NeuralNetwork:
                              ... t
                              [xn_1, xn_2, xn_3, ..., xn_n, yn] ]
    '''
-   def train(self, dataset):
+   def train(self, dataset, max_iterations=10):
       
       print("Training Neural Network....")
 
@@ -138,7 +141,7 @@ class NeuralNetwork:
          print(self.training_status(n))
          print("##############################################")
          
-         if ((self.sqerror/n) < self.threshold) or (count>self.max_dataset_interation):
+         if ((self.sqerror/n) < self.threshold) or (count>max_iterations):
             break
       
       print("Training done.")
@@ -156,13 +159,15 @@ class NeuralNetwork:
       output_size =  self.layer_size[len(self.layer_size)-1]
       input_size = self.layer_size[0]
 
-      print("output_size {}".format(output_size))
+      # print("output_size {}".format(output_size))
 
       if col is not (input_size + output_size): 
          return
 
       # print("# col: {}".format(col))
-
+      # print("+++++++++++++++++ Before +++++++++++++++++++")
+      # print(self)
+      # print("++++++++++++++++++++++++++++++++++++++++++++")
       # transpose([x1, x2, ..., xn, 1])
       x = example[:(col-output_size)].reshape(input_size, 1)
       y = example[(col-output_size):].reshape(output_size, 1)
@@ -183,9 +188,9 @@ class NeuralNetwork:
 
       # print("X = {}, Y = {}".format(x, y))
       # print(self)
-      print("++++++++++++++++++++++++++++++++++++++++++++")
-      print(self.network_status())
-      print("++++++++++++++++++++++++++++++++++++++++++++")
+      # print("++++++++++++++++++ After +++++++++++++++++++")
+      # print(self.network_status())
+      # print("++++++++++++++++++++++++++++++++++++++++++++")
 
    def update_neuron_outputs(self, x):
       
@@ -227,13 +232,13 @@ class NeuralNetwork:
          # *** beta is indexed as W - we do not consider the w 
          # from the input layer (Indentity Matrix) neither the beta
          # from the input layer.
-         self.a[output_index] = np.matmul(w_i,self.a[layer]) + self.beta[layer] 
+         z = np.matmul(w_i, self.a[layer]) + self.beta[layer] 
          
          # apply activation function (default is sigmoide)  
-         print("Z[{}]: {}".format(output_index, self.a[output_index])) 
-         self.a[output_index] = self.apply_activation_function(self.a[output_index])
-         print("A[{}]: {}".format(output_index, self.a[output_index]))
-         self.d_a[output_index] = self.apply_d_activation_function(self.a[output_index])
+         # print("Z[{}]: {}".format(output_index, self.a[output_index])) 
+         self.a[output_index] = self.apply_activation_function(z)
+         # print("A[{}]: {}".format(output_index, self.a[output_index]))
+         self.d_a[output_index] = self.apply_d_activation_function(z)
 
 
    def update_error(self, y):
@@ -266,25 +271,27 @@ class NeuralNetwork:
       # Remember Layer 0 in the W array is the first hidden layer
       # print(list(range(output_layer, -1, -1)))
 
-      for l in range(output_layer-1, 0, -1):
+      for l in range(output_layer-1, -1, -1):
          # print("backpropagate layer {}".format(l))
-         self.delta[l] = np.matmul(self.w[l], self.delta[l+1])*self.d_a[l]
-
+         # print("w[{}]: {}, delta[{}]: {}, d_a[{}]: {}".format(l+1, self.w[l+1], l+2, self.delta[l+2], l+1, self.d_a[l+1]))
+         self.delta[l+1] = np.matmul(self.w[l+1].T, self.delta[l+2])*self.d_a[l+1]
+         # w[0] * delta[1]
 
    def apply_learning_equation(self):
       '''
          This is the implementation of the Gradient Descent Algorithm.
 
          for each layer in the hidden layer:
-            W(t+1) = W(t) + eta * delta[l] * A[l-1]
+            W(t+1) = W(t) - eta * delta[l] * A[l-1].T
       '''
       output_layer = len(self.w)-1
 
       # loop from [output_layer ... 1]
       # Remember Layer 0 in the W array is the first hidden layer
       for l in range(output_layer, -1, -1):
-         print("Learning Equeation Layer {}".format(l))
-         self.w[l] = self.w[l] + self.eta*np.matmul(self.delta[l+1].T,self.a[l+1])
+         # print("Learning Equeation Layer {}".format(l))
+         # print("w[{}]: {}, delta[{}]: {}, a[{}]: {}".format(l, self.w, l+1, self.delta[l+1], l+1, self.a[l+1]))
+         self.w[l] = self.w[l] + self.eta*np.matmul(self.delta[l+1],self.a[l].T)         
          self.beta[l] = self.beta[l] + self.eta*self.delta[l+1]
 
    '''
@@ -304,19 +311,19 @@ class NeuralNetwork:
       outputs = list(self.a) # TODO: Optimize
       outputs[0] = x
 
-      for layer, w_i in enumerate(self.w):
+      for w_index, w_i in enumerate(self.w):
          
          # self.w doesn't consider the input layer, so add 1.
          # We want to update the neuron ouput of the layer(l),
          # so we calculate the activation output using inputs from (l-1) layer
          # and beta from the lth layer.
-         output_index = layer + 1
+         output_index = w_index + 1
 
          # *** beta is indexed as W - we do not consider the w 
          # from the input layer (Indentity Matrix) neither the beta
          # from the input layer.
-         outputs[output_index] = np.matmul(w_i,outputs[layer]) + self.beta[layer]          
-         outputs[output_index] = self.apply_activation_function(outputs[output_index])
+         z = np.matmul(w_i, outputs[output_index-1]) + self.beta[w_index]          
+         outputs[output_index] = self.apply_activation_function(z)
 
       return outputs, outputs[len(outputs)-1]
 
@@ -325,10 +332,11 @@ class NeuralNetwork:
 
 
    def network_status(self):
-      return ("A: {}\n".format(self.a) + 
-         "DELTA:\n{}\n".format(self.delta) + 
-         "Tau(z):\n{}\n".format(self.a) +
-         "Tau'(z):\n{}\n".format(self.d_a))
+      return ("A: {}\n".format(self.a) +
+              "A': {}\n".format(self.d_a) + 
+         "DELTA:\n{}\n".format(self.delta) +
+         "W:\n{}\n".format(self.w) +
+         "Beta:\n{}\n".format(self.beta))
 
    def training_status(self, n):
       return "Error: {} / {}".format(self.sqerror/n, self.threshold)
@@ -349,22 +357,16 @@ if __name__ == "__main__":
    input_size = dataset.shape[1] - 1
    output_size = 1
 
-   nn_size = [input_size, 2, output_size]
+   nn_size = [input_size, 3, output_size]
 
    print("DataSet: {}".format(dataset))
    print("NN SIZE {}".format(nn_size))
 
-   mlp = NeuralNetwork(nn_size, eta=0.1, max_iterations=1000, threshold=0.1)
+   mlp = NeuralNetwork(nn_size, eta=0.05, threshold=0.1)
+      
+   # print(mlp)
    
-   outputs, output = mlp.classify(np.array([0,0]))
-   
-   print(mlp)
-
-   print("==========================")
-   print("Z: {}".format(outputs))
-   print("ŷ: {}".format(output))
-   
-   mlp.train(dataset)
+   mlp.train(dataset, max_iterations=10000)
 
    outputs, output = mlp.classify(np.array([0,0]))
    
@@ -373,25 +375,25 @@ if __name__ == "__main__":
    x = np.array([0,0])
    outputs, output = mlp.classify(x)
    print("==========================")
-   print("Z: {}".format(outputs))
+   # print("Z: {}".format(outputs))
    print("x: {}, ŷ: {}".format(x, output))
 
    x = np.array([0,1])
    outputs, output = mlp.classify(x)
    print("==========================")
-   print("Z: {}".format(outputs))
+   # print("Z: {}".format(outputs))
    print("x: {}, ŷ: {}".format(x, output))
 
    x = np.array([1,0])
    outputs, output = mlp.classify(x)
    print("==========================")
-   print("Z: {}".format(outputs))
+   # print("Z: {}".format(outputs))
    print("x: {}, ŷ: {}".format(x, output))
 
 
    x = np.array([1,1])
    outputs, output = mlp.classify(x)
    print("==========================")
-   print("Z: {}".format(outputs))
+   # print("Z: {}".format(outputs))
    print("x: {}, ŷ: {}".format(x, output))
 
