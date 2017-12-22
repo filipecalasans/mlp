@@ -9,5 +9,3 @@ the network.
 * Implement Stochastic Gradient Descent Algorithm variations:
    * Batch Gradient Descent
    * Mini-batch Gradient Descent
-
-* Optimize the Classify method for no-copy.

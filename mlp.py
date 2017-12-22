@@ -123,7 +123,7 @@ class NeuralNetwork:
                              ... t
                              [xn_1, xn_2, xn_3, ..., xn_n, yn] ]
    '''
-   def train(self, dataset, max_iterations=10):
+   def train(self, dataset, max_iterations=0):
       
       print("Training Neural Network....")
 
@@ -141,7 +141,7 @@ class NeuralNetwork:
          print(self.training_status(n))
          print("##############################################")
          
-         if ((self.sqerror/n) < self.threshold) or (count>max_iterations):
+         if ((self.sqerror/n) < self.threshold) or (count>max_iterations and max_iterations>0):
             break
       
       print("##############################################")
@@ -275,10 +275,10 @@ class NeuralNetwork:
       # Remember Layer 0 in the W array is the first hidden layer
       # print(list(range(output_layer, -1, -1)))
 
-      for l in range(output_layer-1, -1, -1):
+      for l in range(output_layer, 0, -1):
          # print("backpropagate layer {}".format(l))
          # print("w[{}]: {}, delta[{}]: {}, d_a[{}]: {}".format(l+1, self.w[l+1], l+2, self.delta[l+2], l+1, self.d_a[l+1]))
-         self.delta[l+1] = np.matmul(self.w[l+1].T, self.delta[l+2])*self.d_a[l+1]
+         self.delta[l] = np.matmul(self.w[l].T, self.delta[l+1])*self.d_a[l]
          # w[0] * delta[1]
 
    def apply_learning_equation(self):
@@ -312,8 +312,8 @@ class NeuralNetwork:
 
       x = x.reshape(input_size, 1)
       
-      outputs = list(self.a) # TODO: Optimize
-      outputs[0] = x
+      outputs = [] # TODO: Optimize
+      outputs.append(x)
 
       for w_index, w_i in enumerate(self.w):
          
@@ -327,7 +327,7 @@ class NeuralNetwork:
          # from the input layer (Indentity Matrix) neither the beta
          # from the input layer.
          z = np.matmul(w_i, outputs[output_index-1]) + self.beta[w_index]          
-         outputs[output_index] = self.apply_activation_function(z)
+         outputs.append(self.apply_activation_function(z))
 
       return outputs, outputs[len(outputs)-1]
 
@@ -345,7 +345,10 @@ class NeuralNetwork:
    def training_status(self, n):
       return "Error: {} / {}".format(self.sqerror/n, self.threshold)
 
+
+
 if __name__ == "__main__":
+
    print("MLP Test")   
 
    filename = "XOR.dat"
@@ -367,7 +370,7 @@ if __name__ == "__main__":
    print("NN SIZE {}".format(nn_size))
 
    mlp = NeuralNetwork(nn_size, eta=0.1, threshold=1e-3)
-      
+         
    # print(mlp)
    
    mlp.train(dataset, max_iterations=100000)
