@@ -1,4 +1,4 @@
-from mlp import NeuralNetwork
+from lib.mlp import NeuralNetwork
 import numpy as np
 
 if __name__ == "__main__":
