@@ -52,8 +52,8 @@ class NeuralNetwork(object):
          self.w.append(np.random.uniform(self.w_init_min, self.w_init_max, (layer_size[l+1], layer_size[l])))
          self.beta.append(np.random.uniform(self.b_init_min, self.b_init_max, (layer_size[l+1], 1)))
 
-         self.nabla_w.append(np.zeros((layer_size[l+1], layer_size[l])))
-         self.nabla_beta.append(np.zeros((layer_size[l+1], 1)))
+         self.nabla_w.append(np.zeros(self.w[l].shape))
+         self.nabla_beta.append(np.zeros((self.beta[l].shape)))
 
       if self.is_debug:
          print("W:\n{}".format(self.w))
@@ -177,7 +177,7 @@ class NeuralNetwork(object):
    def update_batch(self, batch, eta=0.1):
 
       self.eta = eta
-      self.sqerror = 0.0
+      # self.sqerror = 0.0
       self.batch_size = batch.shape[0]
 
       for example in batch:
@@ -185,20 +185,36 @@ class NeuralNetwork(object):
          self.forward_and_backpropagate(example)
          self.accumulate_and_apply_learning()
 
-         if self.is_debug:
-            print(self.training_status(self.batch_size))
-            print("##############################################")
-
-   def train_batch(self, dataset, batch_size, eta=0.1):
+   def train_batch(self, dataset, batch_size, eta=0.1,  threshold=1e-3, max_iterations=0):
       
       if dataset.shape[0]%batch_size is not 0:
          print("[ERROR] len(dataset) % batch_size != 0")
          return
+      
+      self.threshold = threshold
 
       index = np.array(range(dataset.shape[0]))
+      
+      batch_init = 0
+      n = dataset.shape[0]
 
-      print
+      while True:
+         
+         batch_dataset = np.array(dataset[batch_init:(batch_init+batch_size)])
+         self.update_batch(batch_dataset, eta)
+         batch_init = (batch_init + batch_size) % dataset.shape[0]
 
+         if ((self.sqerror/n) < self.threshold) or (self.count>max_iterations and max_iterations>0):
+            print(self.training_status(n))
+            print("Trainig done.")
+            print("##############################################")
+            return
+         
+         if self.count % n == 0:
+            if self.is_debug:
+               print(self.training_status(n))
+               print("##############################################")
+            self.sqerror = 0
 
    '''
       train: Apply Network over the given example, backpropagate the error and update the 
@@ -336,6 +352,10 @@ class NeuralNetwork(object):
       # Remember Layer 0 in the W array is the first hidden layer
       for l in range(output_layer, -1, -1):  
          n_w, n_beta = self.calculate_update_step(l)
+
+         # print("Nabla_w: \n{}\n".format(n_w))
+         # print("Nabla_beta: \n{}\n".format(n_beta))
+
          self.w[l] = self.w[l] + self.eta*n_w          
          self.beta[l] = self.beta[l] + self.eta*n_beta
 
@@ -357,16 +377,19 @@ class NeuralNetwork(object):
          
          n_w, n_beta = self.calculate_update_step(l)
          
-         self.nabla_w[l] += n_w
-         self.nabla_beta[l] += n_beta
+         self.nabla_w[l] = self.nabla_w[l] + n_w
+         self.nabla_beta[l] = self.nabla_beta[l] + n_beta
+
+         # print("Nabla_w: \n{}\n".format(self.nabla_w[l]))
+         # print("Nabla_beta: \n{}\n".format(self.nabla_beta[l]))
 
          if self.count%self.batch_size == 0:
-
-            self.w[l] = self.w[l] + (self.eta/self.batch_size) * self.nabla_w[l]          
-            self.beta[l] = self.beta[l] + (self.eta/self.batch_size) * self.nabla_beta[l]
+            # print("COUNT: {}, LAYER: {}".format(self.count, l))
+            self.w[l] = self.w[l] + ((self.eta/self.batch_size) * self.nabla_w[l])          
+            self.beta[l] = self.beta[l] + ((self.eta/self.batch_size) * self.nabla_beta[l])
             
-            self.nabla_w[l] = np.zeros(self.nabla_w.shape)
-            self.nabla_beta[l] = np.zeros(self.nabla_beta.shape)
+            self.nabla_w[l] = np.zeros(self.w[l].shape)
+            self.nabla_beta[l] = np.zeros(self.beta[l].shape)
             
 
    def calculate_update_step(self, l):

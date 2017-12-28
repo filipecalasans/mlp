@@ -3,7 +3,7 @@ import numpy as np
 
 if __name__ == "__main__":
 
-   print("MLP Test")   
+   print("MLP Test usin XOR gate example")   
 
    filename = "XOR.dat"
 
