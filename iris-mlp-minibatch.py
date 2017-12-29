@@ -30,6 +30,7 @@ if __name__ == "__main__":
    mlp.train(dataset, eta=0.05, threshold=3e-2)
 
    a, y = mlp.classify(dataset[63][0:input_size])
+
    print("Y: {}, Ŷ: {}".format(dataset[63][-(input_size-1):], y))
 
    a, y = mlp.classify(dataset[0][0:input_size])
