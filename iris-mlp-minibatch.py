@@ -26,6 +26,8 @@ if __name__ == "__main__":
    mlp = NeuralNetwork(nn_size, True)
 
    batch_size = 10
+
+   # mlp.train_batch(dataset, batch_size=batch_size, eta=0.05, threshold=1e-3)
    mlp.train(dataset, eta=0.05, threshold=1e-3)
 
    a, y = mlp.classify(dataset[63][0:input_size])
