@@ -2,7 +2,7 @@
 
 Multilayer Perceptron implementation using Python. This MLP implementation uses quadratic cost function and sigmoid activation function. Users are able to customized the activation code, however we still don't give support for changing the cost function.
 
-# Examples Provided
+# Examples
 
 ## XOR Gate
 
