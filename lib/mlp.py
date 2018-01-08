@@ -310,13 +310,19 @@ class NeuralNetwork(object):
             where,  (o) is the Hadamard Product operator [apply multiplication element wise].
                  , A' = Tau' (samething) 
       '''
-      error = (y - self.a[-1])
+      gradient = self.cost_function_gradient(self.a, y)
 
       # calculate the error in the output layer 
       # Apply activation function derivative using hadamard product operation
-      self.delta[-1] = error * self.d_a[-1] 
-      self.sqerror += np.sum(error**2)
+      self.delta[-1] = gradient * self.d_a[-1] 
+      self.sqerror += self.cost_function(self.a, y)
 
+   def cost_function(self, a, y):
+      error = (y-a[-1])
+      return np.sum(error**2)
+
+   def cost_function_gradient(self, a, y):
+      return (y - a[-1])
 
    def backpropagate(self):
       '''
