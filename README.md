@@ -44,14 +44,14 @@ You can use two approaches: You can reassign the two methods on a *NeuralNetwork
    #  Implement cross-entropy cost function: (Sum for each output neuron)
    #  C = -sum([yln(a) + (1-y)ln(1-a)])
    #  gradient(C) = (a-y)/(a(1-a)) 
-   def cost_entropy_gradient(a,y):
+   def cross_entropy_gradient(a,y):
       return (a-y)/(a*(np.ones(a.shape)-a))
 
    def cross_entropy(a,y):
       return -1*np.sum(y*np.log(a) + ((np.ones(y.shape)-y)*np.log(np.ones(a.shape)-a)))
    
    mlp.cost_function = cross_entropy 
-   mlp.cost_function_gradient = cost_entropy_gradient
+   mlp.cost_function_gradient = cross_entropy_gradient
 ```
 
 
