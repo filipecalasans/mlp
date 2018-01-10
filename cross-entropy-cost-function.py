@@ -43,10 +43,13 @@ if __name__ == "__main__":
    mlp.train(dataset, eta=0.05, threshold=1e-1)
 
    a, y = mlp.classify(dataset[63][0:input_size])
-   print("Y: {}, Ŷ: {}, round(Ŷ): {}".format(dataset[63][-(input_size-1):].flatten(), y.flatten(), np.round(y).flatten()))
+   print("Y: {}, Ŷ: {}, round(Ŷ): {}".format(dataset[63][-(input_size-1):].flatten(), \
+            y.flatten(), np.round(y).flatten()))
 
    a, y = mlp.classify(dataset[0][0:input_size])
-   print("Y: {}, Ŷ: {}, round(Ŷ): {}".format(dataset[0][-(input_size-1):].flatten(), y.flatten(), np.round(y).flatten()))
+   print("Y: {}, Ŷ: {}, round(Ŷ): {}".format(dataset[0][-(input_size-1):].flatten(), \
+            y.flatten(), np.round(y).flatten()))
 
    a, y = mlp.classify(dataset[110][0:input_size])
-   print("Y: {}, Ŷ: {}, round(Ŷ): {}".format(dataset[110][-(input_size-1):].flatten(), y.flatten(), np.round(y).flatten()))
+   print("Y: {}, Ŷ: {}, round(Ŷ): {}".format(dataset[110][-(input_size-1):].flatten(), \
+            y.flatten(), np.round(y).flatten()))
