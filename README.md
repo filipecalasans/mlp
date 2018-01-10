@@ -18,7 +18,7 @@ The source code is provided in *iris-mlp-minibatch.py* and dataset in the file *
 
 ### Cross-Entropy Cost Function (Switching the Neural Network Cost Function)
 
-The source file *cross-entropy-cost-function.py* implements Cross-Entropy Cost function and applyies the NN over the Iris Data Set. I show in this example that in order to implement a different cost functions, users must reimplement two methods from *NeuralNetwork* class: 
+The source file *cross-entropy-cost-function.py* implements Cross-Entropy Cost function and applies the NN over the Iris Data Set. I show in this example that in order to implement a different cost functions, users must reimplement two methods from *NeuralNetwork* class: 
    
 ```python
    
