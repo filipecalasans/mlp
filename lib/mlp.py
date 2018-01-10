@@ -1,6 +1,9 @@
 import numpy as np
 import math
 
+'''
+
+'''
 class NeuralNetwork(object):
 
    w_init_max = 0.5
@@ -310,19 +313,25 @@ class NeuralNetwork(object):
             where,  (o) is the Hadamard Product operator [apply multiplication element wise].
                  , A' = Tau' (samething) 
       '''
-      gradient = self.cost_function_gradient(self.a, y)
+      gradient = self.cost_function_gradient(self.a[-1], y)
 
       # calculate the error in the output layer 
       # Apply activation function derivative using hadamard product operation
       self.delta[-1] = gradient * self.d_a[-1] 
-      self.sqerror += self.cost_function(self.a, y)
+      self.sqerror += self.cost_function(self.a[-1], y)
 
+   '''
+      Default Cost funtions used is the Squared Error.
+      But in case you want to add support for a different 
+      cost function, you must reimplement the method
+      cost_function and the cost function gradient.
+   '''
    def cost_function(self, a, y):
-      error = (y-a[-1])
+      error = (a-y)
       return np.sum(error**2)
 
    def cost_function_gradient(self, a, y):
-      return (y - a[-1])
+      return (a-y)
 
    def backpropagate(self):
       '''
@@ -362,8 +371,8 @@ class NeuralNetwork(object):
          # print("Nabla_w: \n{}\n".format(n_w))
          # print("Nabla_beta: \n{}\n".format(n_beta))
 
-         self.w[l] = self.w[l] + self.eta*n_w          
-         self.beta[l] = self.beta[l] + self.eta*n_beta
+         self.w[l] = self.w[l] - self.eta*n_w          
+         self.beta[l] = self.beta[l] - self.eta*n_beta
 
    def accumulate_and_apply_learning(self):
       '''
@@ -391,8 +400,8 @@ class NeuralNetwork(object):
 
          if self.count%self.batch_size == 0:
             # print("COUNT: {}, LAYER: {}".format(self.count, l))
-            self.w[l] = self.w[l] + ((self.eta/self.batch_size) * self.nabla_w[l])          
-            self.beta[l] = self.beta[l] + ((self.eta/self.batch_size) * self.nabla_beta[l])
+            self.w[l] = self.w[l] - ((self.eta/self.batch_size) * self.nabla_w[l])          
+            self.beta[l] = self.beta[l] - ((self.eta/self.batch_size) * self.nabla_beta[l])
             
             self.nabla_w[l] = np.zeros(self.w[l].shape)
             self.nabla_beta[l] = np.zeros(self.beta[l].shape)
