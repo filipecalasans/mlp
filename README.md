@@ -1,6 +1,6 @@
 # MLP: Multilayer Perceptron
 
-Multilayer Perceptron implementation using Python. This MLP implementation uses quadratic cost function and sigmoid activation function. Users are able to customized the activation code, however I still don't give support for changing the cost function.
+Multilayer Perceptron implementation using Python. The default MLP implementation uses quadratic cost function and sigmoid activation function. Users are able to customize the activation code and cost function as needed.
 
 # Examples
 
