@@ -1,1 +1,2 @@
 numpy==1.13.3
+python-mnist==0.5
