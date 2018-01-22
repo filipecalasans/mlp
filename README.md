@@ -54,4 +54,15 @@ You can use two approaches: You can reassign the two methods on a *NeuralNetwork
    mlp.cost_function_gradient = cross_entropy_gradient
 ```
 
+### MNNIST Example
 
+I implement a Neural Network that learning to classify Handwritten numbers from the MNIST dataset. I used a 3rd party package to load the MNIST dataset into numpy arrays and use the data to train and validate the network. You'll find the source code in the file *mnist-test.py*. (Example still on going... )
+
+Missing split the data set on validation and training data sets, so we can expose the network to unseen 
+examples. (10-fold Cross validation)
+
+### TODO
+   * Regularization L1, L2, using static methods on Regularization Class.
+   * Implement Cost Function and Activation Function Classes with static methods that implement the function and its derivative.
+   * Plot performance x epoch
+   * Implement K-fold Cross-validation

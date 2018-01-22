@@ -48,4 +48,4 @@ if __name__ == "__main__":
    batch_size = 10
 
    # mlp.train_batch(data_set[:500], batch_size=batch_size, eta=0.05, threshold=1e-3)
-   # mlp.train(data_set[:500], eta=0.1, threshold=1e-2, max_iterations=100)
+   mlp.train(data_set[:500], eta=0.1, threshold=1e-2, max_iterations=100)
