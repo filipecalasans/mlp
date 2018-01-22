@@ -52,17 +52,18 @@ class NeuralNetwork(object):
       for l in range(len(layer_size)-1):
          # w and beta don't contain the input layer. (These matrices characterize the NN)
          # print((layer_size[l+1], layer_size[l]))
-         self.w.append(np.random.uniform(self.w_init_min, self.w_init_max, (layer_size[l+1], layer_size[l])))
+         input_size = layer_size[0]
+         self.w.append(np.random.normal(0, 1/math.sqrt(input_size), (layer_size[l+1], layer_size[l])))
          self.beta.append(np.random.uniform(self.b_init_min, self.b_init_max, (layer_size[l+1], 1)))
 
          self.nabla_w.append(np.zeros(self.w[l].shape))
          self.nabla_beta.append(np.zeros((self.beta[l].shape)))
 
-      if self.is_debug:
-         print("W:\n{}".format(self.w))
-         print("Beta:\n{}".format(self.beta))
-         print("nabla_w:\n{}".format(self.nabla_w))
-         print("nabla_beta:\n{}".format(self.nabla_beta))
+      # if self.is_debug:
+      #    print("W:\n{}".format(self.w))
+      #    print("Beta:\n{}".format(self.beta))
+      #    print("nabla_w:\n{}".format(self.nabla_w))
+      #    print("nabla_beta:\n{}".format(self.nabla_beta))
 
       for l in range(0, len(layer_size)):
          # a = [[x1, x2, ..., xn].T, [a_11, a1_2, ..., a_1n].T, .... [a_L1, a_L2, ..., a_Ln].T]
@@ -70,22 +71,22 @@ class NeuralNetwork(object):
          # input vector for a given example.
          self.a.append(np.zeros((layer_size[l], 1)))
       
-      if self.is_debug:
-         print("A: {}".format(self.a))
+      # if self.is_debug:
+      #    print("A: {}".format(self.a))
       
       # derivative of the activation function
       self.d_a = list(self.a)
       
-      if self.is_debug:
-         print("d_A: {}".format(self.d_a))
+      # if self.is_debug:
+      #    print("d_A: {}".format(self.d_a))
       
       # delta[L] = (y - ŷ) * d_a[L]     ===> for the output layer in a L-depth network
       # delta[l] = w[l+1]*delta[l+1] (o) d_a[l] ===> for the Hidden layers
       # where (o) is the Hadamard product
       self.delta =  list(self.a)
       
-      if self.is_debug:
-         print("delta: {}".format(self.delta))
+      # if self.is_debug:
+      #    print("delta: {}".format(self.delta))
 
    # Hadamard Product of the activation function (Tau) over the
    # net vector. net vector is the vector Z[l]
@@ -240,14 +241,14 @@ class NeuralNetwork(object):
       output_size =  self.layer_size[len(self.layer_size)-1]
       input_size = self.layer_size[0]
 
-      # print("output_size {}".format(output_size))
-
-      if col is not (input_size + output_size): 
+      if col != (input_size + output_size): 
+         print("Error col != input_size + output_size. [{} != {} + {}], {}".format(
+               col, input_size, output_size, input_size+output_size))
          return
 
       x = example[:(col-output_size)].reshape(input_size, 1)
       y = example[(col-output_size):].reshape(output_size, 1)
-
+      
       self.update_neuron_outputs(x)
 
       # Update the error matrices
