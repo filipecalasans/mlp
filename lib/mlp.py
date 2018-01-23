@@ -26,7 +26,8 @@ class QuadraticCost(object):
 
    @staticmethod
    def fn(a, y):
-      return 0.5*np.sum((a-y)**2)
+      error = (a-y)
+      return 0.5*np.sum(error**2)
 
    @staticmethod
    def gradient(a, y):
@@ -370,10 +371,10 @@ class NeuralNetwork(object):
 
    def apply_learning_equation(self):
       '''
-         This is the implementation of the Stochastic Gradient Descent Algorithm.
+         Stochastic Gradient Descent Algorithm.
 
          for each layer in the hidden layer:
-            W(t+1) = W(t) + eta * delta[l] * A[l-1].T
+            W(t+1) = W(t) - eta * delta[l] * A[l-1].T
       '''
       output_layer = len(self.w)-1
 
@@ -390,18 +391,18 @@ class NeuralNetwork(object):
 
    def accumulate_and_apply_learning(self):
       '''
-         accumulate the gradient descent increment step throught the batch unit.
+         accumulate the gradient descent and increment step throught batch examples.
          Apply the minibatch gradient descent equation at the end of the batch iteration.
 
-         This is the implementation of the batch/minibatch Gradient Descent Algorithm.
+         implementation of batch/minibatch Gradient Descent Algorithm.
 
          for each layer in the hidden layer:
-            W(t+1) = W(t) + (eta/batch_size) * delta[l] * A[l-1].T
+            W(t+1) = W(t) - (eta/batch_size) * delta[l] * A[l-1].T
       '''
       output_layer = len(self.w)-1
 
       # loop from [output_layer ... 1]
-      # Remember Layer 0 in the W array is the first hidden layer
+      # Remember: Layer 0 in the W array is the first hidden layer
       for l in range(output_layer, -1, -1):  
          
          n_w, n_beta = self.calculate_update_step(l)
@@ -451,9 +452,8 @@ class NeuralNetwork(object):
          # and beta from the lth layer.
          output_index = w_index + 1
 
-         # *** beta is indexed as W - we do not consider the w 
+         # *** beta is indexed as W - we do not consider the weights
          # from the input layer (Indentity Matrix) neither the beta
-         # from the input layer.
          z = np.matmul(w_i, outputs[output_index-1]) + self.beta[w_index]          
          outputs.append(self.apply_activation_function(z))
 
