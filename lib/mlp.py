@@ -23,7 +23,6 @@ class SigmoidActivation(object):
       return df_sigmoid(x)
    
 class QuadraticCost(object):
-
    @staticmethod
    def fn(a, y):
       error = (a-y)
@@ -33,8 +32,7 @@ class QuadraticCost(object):
    def gradient(a, y):
       return (a-y)
 
-class CrossEntropyCsst(object):
-
+class CrossEntropyCost(object):
    #  Implement cross-entropy cost function: (Sum for each output neuron)
    #  C = -sum([yln(a) + (1-y)ln(1-a)])
    @staticmethod
@@ -48,14 +46,40 @@ class CrossEntropyCsst(object):
       return (a-y)/(a*(np.ones(a.shape)-a))
 
 class RegularizationNone(object):
-
    @staticmethod
-   def fn(lmbda, w):
+   def fn(lmbda, n, w):
       return 0
    
    @staticmethod
-   def df(lmbda, w):
+   def df(lmbda, n, w):
       return 0
+
+class RegularizationL1(object):
+   @staticmethod
+   def fn(lmbda, n, w):
+      w_sum = 0
+      for wi in w:
+         w_sum += np.sum(wi)
+
+      return (lmbda*w_sum)/n
+   
+   @staticmethod
+   def df(lmbda, n, w):
+      return [ (lmbda*np.sign(wi))/n for wi in w] 
+
+class RegularizationL2(object):
+   @staticmethod
+   def fn(lmbda, n, w):
+      w_sum = 0
+      for wi in w:
+         w_sum += np.sum(wi**2)
+
+      return (0.5*lmbda*w_sum)/n
+   
+   @staticmethod
+   def df(lmbda, n, w):
+      return [ (lmbda*wi)/n for wi in w]
+      
 
 '''
 
@@ -123,6 +147,10 @@ class NeuralNetwork(object):
 
          self.nabla_w.append(np.zeros(self.w[l].shape))
          self.nabla_beta.append(np.zeros((self.beta[l].shape)))
+
+      self.n_weights=0.0
+      for wi in self.w:
+          self.n_weights += wi.shape[0]*wi.shape[1] 
 
       # if self.is_debug:
       #    print("W:\n{}".format(self.w))
@@ -362,7 +390,7 @@ class NeuralNetwork(object):
       # Apply activation function derivative using hadamard product operation
       self.delta[-1] = gradient * self.d_a[-1] 
       self.sqerror += ((self.cost).fn(self.a[-1], y) + 
-                        self.regularization.fn(self.reg_lmbda, self.w))
+                        self.regularization.fn(self.reg_lmbda, self.n_weights, self.w))
 
    def backpropagate(self):
       '''
@@ -392,7 +420,10 @@ class NeuralNetwork(object):
          for each layer in the hidden layer:
             W(t+1) = W(t) - eta * delta[l] * A[l-1].T
       '''
+      
+      
       output_layer = len(self.w)-1
+      d_regularization = self.regularization.df(self.reg_lmbda, self.n_weights, self.w)
 
       # loop from [output_layer ... 1]
       # Remember Layer 0 in the W array is the first hidden layer
@@ -402,9 +433,8 @@ class NeuralNetwork(object):
          # print("Nabla_w: \n{}\n".format(n_w))
          # print("Nabla_beta: \n{}\n".format(n_beta))
 
-         self.w[l] = self.w[l] - self.eta*n_w          
-         self.beta[l] = (self.beta[l] - self.eta*n_beta - 
-                        self.regularization.df(self.reg_lmbda, self.w))
+         self.w[l] = self.w[l] - self.eta*n_w - self.eta*d_regularization[l]       
+         self.beta[l] = self.beta[l] - self.eta*n_beta
 
    def accumulate_and_apply_learning(self):
       '''
@@ -417,7 +447,7 @@ class NeuralNetwork(object):
             W(t+1) = W(t) - (eta/batch_size) * delta[l] * A[l-1].T
       '''
       output_layer = len(self.w)-1
-
+      d_regularization = self.regularization.df(self.reg_lmbda, self.n_weights, self.w)
       # loop from [output_layer ... 1]
       # Remember: Layer 0 in the W array is the first hidden layer
       for l in range(output_layer, -1, -1):  
@@ -432,9 +462,9 @@ class NeuralNetwork(object):
 
          if self.count%self.batch_size == 0:
             # print("COUNT: {}, LAYER: {}".format(self.count, l))
-            self.w[l] = self.w[l] - ((self.eta/self.batch_size) * self.nabla_w[l])          
-            self.beta[l] = (self.beta[l] - ((self.eta/self.batch_size) * self.nabla_beta[l]) - 
-                           self.regularization.df(self.reg_lmbda, self.w))
+            self.w[l] = (self.w[l] - ((self.eta/self.batch_size) * self.nabla_w[l]) - 
+                        ((self.eta/self.batch_size)*d_regularization[l]))         
+            self.beta[l] = self.beta[l] - ((self.eta/self.batch_size)*self.nabla_beta[l])
             
             self.nabla_w[l] = np.zeros(self.w[l].shape)
             self.nabla_beta[l] = np.zeros(self.beta[l].shape)
