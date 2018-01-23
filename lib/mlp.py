@@ -16,7 +16,7 @@ class SigmoidActivation(object):
    '''
    @staticmethod
    def f(x):
-      return 1.0/(1.0+f_sigmoid(-x))
+      return f_sigmoid(x)
 
    @staticmethod
    def df(x):
