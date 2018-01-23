@@ -52,17 +52,20 @@ if __name__ == "__main__":
    n_folds = 10
    
    epoches=10
-   
+   performance ={"acc":[],
+                 "cost":[], 
+                 }
+
    for j in range(epoches):
       cost_epoch=0
       acc_epoch=0
-      kfold = tu.k_fold(n_folds, 500)
+      kfold = tu.k_fold(n_folds, 1000)
       print("*********************************************")
       print("Epoch {}".format(j))
       print("*********************************************")
       for i in range(n_folds):
          cost, accuracy = tu.train_and_validate_kfold(nn=mlp, 
-                                                      dataset=data_set[:500],
+                                                      dataset=data_set[:1000],
                                                       folds=kfold, 
                                                       validation_fold=i,
                                                       eta=0.1,
@@ -72,5 +75,10 @@ if __name__ == "__main__":
          acc_epoch += accuracy
 
       print("_____________________________________________")
-      print(">>>  Cost:{}, Acc: {}".format(cost_epoch/epoches, acc_epoch/epoches))   
+      print(">>>  Cost:{}, Acc: {}".format(cost_epoch/n_folds, acc_epoch/n_folds))   
       print("_____________________________________________")
+
+      performance["acc"].append(acc_epoch/n_folds)
+      performance["cost"].append(cost_epoch/n_folds)
+
+   print("Performance:\n{}".format(performance))
