@@ -45,13 +45,11 @@ if __name__ == "__main__":
 
 ### MNNIST Example
 
-I implement a Neural Network that learning to classify Handwritten numbers from the MNIST dataset. I used a 3rd party package to load the MNIST dataset into numpy arrays and use the data to train and validate the network. You'll find the source code in the file *mnist-test.py*. (Example still on going... )
+I implement a Neural Network that learns to classify handwritten numbers from the MNIST dataset. I used a 3rd-party package to load the MNIST dataset into numpy arrays, which I use to train and validate the network. You'll find the source code in the file *mnist-test.py*. (Example still on going... )
 
-Missing split the data set on validation and training data sets, so we can expose the network to unseen 
-examples. (10-fold Cross validation)
+The examples is still missing a more realistic training strategy, which involves splitting the data set on validation and training data sets, such as K-fold Cross validation.
 
 ### TODO
    * Regularization L1, L2, using static methods on Regularization Class.
-   * Implement Cost Function and Activation Function Classes with static methods that implement the function and its derivative.
    * Plot performance x epoch
    * Implement K-fold Cross-validation
