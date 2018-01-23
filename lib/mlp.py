@@ -4,12 +4,11 @@ import math
 #### Miscellaneous functions
 def f_sigmoid(x):
     """The sigmoid function."""
-    return 
+    return 1.0/(1.0+math.exp(-x))
 
 def df_sigmoid(x):
     """Derivative of the sigmoid function."""
-    return 
-
+    return f_sigmoid(x)*(1-f_sigmoid(x))
 
 class SigmoidActivation(object):
    '''
@@ -23,6 +22,30 @@ class SigmoidActivation(object):
    def df(x):
       return SigmoidActivation.f(x)*(1-SigmoidActivation.f(x))
    
+class QuadraticCost(object):
+
+   @staticmethod
+   def fn(a, y):
+      return 0.5*np.linalg.norm(a-y)**2
+
+   @staticmethod
+   def gradient(a, y):
+      return (a-y)
+
+class CrossEntropyCsst(object):
+
+   #  Implement cross-entropy cost function: (Sum for each output neuron)
+   #  C = -sum([yln(a) + (1-y)ln(1-a)])
+   @staticmethod
+   def fn(a,y):
+      return -1*np.sum(y*np.log(a) + 
+            ((np.ones(y.shape)-y)*np.log(np.ones(a.shape)-a)))
+
+   #gradient(C) = (a-y)/(a(1-a))
+   @staticmethod
+   def gradient(a,y):
+      return (a-y)/(a*(np.ones(a.shape)-a))
+
 '''
 
 '''
@@ -47,6 +70,7 @@ class NeuralNetwork(object):
    def __init__(self, 
                layer_size=[2,3,1], 
                activation=SigmoidActivation,
+               cost=QuadraticCost,
                debug_string=False):
       
       self.activation_function=SigmoidActivation
@@ -56,6 +80,7 @@ class NeuralNetwork(object):
       self.threshold = 1e-3
       self.eta = 0.1
       self.count = 0
+      self.cost = cost
 
       self.batch_size = 1
 
@@ -139,31 +164,6 @@ class NeuralNetwork(object):
       y = d_fnet(x_array)
       return y
          
-   # '''
-   #    Default activation function 
-   # '''
-   # def sigmoid(self, x):
-   #    return 1/(1+math.exp(-x))
-   
-   # '''
-   #    Default activation function derivative 
-   # '''
-   # def d_sigmoid(self, x):
-   #    return self.sigmoid(x)*(1 - self.sigmoid(x))
-   
-   ''' If you want to change the activation 
-       function, you need od_sigmoidnly to override the following two functions.
-       tau(zl) [activation_function] and tau'(zl) [d_activation_function].
-
-       @x: float value.
-
-   '''
-   # def activation_function(self, x):
-   #    return self.sigmoid(x)
-
-   # def d_activation_function(self, x):
-   #    return self.d_sigmoid(x)
-   
    '''
       train: Test Neural Networ: (Stochastic)
          @dataset: Numpy Matrix dataset N examples
@@ -340,25 +340,12 @@ class NeuralNetwork(object):
             where,  (o) is the Hadamard Product operator [apply multiplication element wise].
                  , A' = Tau' (samething) 
       '''
-      gradient = self.cost_function_gradient(self.a[-1], y)
+      gradient = (self.cost).gradient(self.a[-1], y)
 
       # calculate the error in the output layer 
       # Apply activation function derivative using hadamard product operation
       self.delta[-1] = gradient * self.d_a[-1] 
-      self.sqerror += self.cost_function(self.a[-1], y)
-
-   '''
-      Default Cost funtions used is the Squared Error.
-      But in case you want to add support for a different 
-      cost function, you must reimplement the method
-      cost_function and the cost function gradient.
-   '''
-   def cost_function(self, a, y):
-      error = (a-y)
-      return np.sum(error**2)
-
-   def cost_function_gradient(self, a, y):
-      return (a-y)
+      self.sqerror += (self.cost).fn(self.a[-1], y)
 
    def backpropagate(self):
       '''

@@ -18,40 +18,29 @@ The source code is provided in *iris-mlp-minibatch.py* and dataset in the file *
 
 ### Cross-Entropy Cost Function (Switching the Neural Network Cost Function)
 
-The source file *cross-entropy-cost-function.py* implements Cross-Entropy Cost function and applies the NN over the Iris Data Set. I show in this example that in order to implement a different cost functions, users must reimplement two methods from *NeuralNetwork* class: 
+The source file *cross-entropy-cost-function.py* applies a NN with Cross-Entropy Cost function over the Iris Data Set. I show in this example that in order to implement a different cost functions, users must provide the NeuralNetwork construct with a class with two static methods: *fn*(Cost Functon) and *gradient* (Function Gradient).
    
 ```python
+
+from lib.mlp import NeuralNetwork
+ 
+class CrossEntropyCsst(object):
+    
+   @staticmethod
+   def fn(a,y):
+      return -1*np.sum(y*np.log(a) + 
+            ((np.ones(y.shape)-y)*np.log(np.ones(a.shape)-a)))
    
-class NeuralNetwork(object):   
-   #
-   # a: n x 1 column numpy matrix (Neural Network output in the output layer - estimated values)
-   # y: n x 1 column numpy matrix (Test Example desired output)
-   #    
-   def cost_function(self, a, y)
-
-   def cost_function_gradient(self, a, y)
-```
-
-You can use two approaches: You can reassign the two methods on a *NeuralNetwork* instance, as shown below, or you can inherit *NeuralNetwork* class and override both methods.
-
-```python
-   
-   nn_size = [3, 3, 1]
-
-   mlp = NeuralNetwork(nn_size)
-   
-   # 
-   #  Implement cross-entropy cost function: (Sum for each output neuron)
-   #  C = -sum([yln(a) + (1-y)ln(1-a)])
-   #  gradient(C) = (a-y)/(a(1-a)) 
-   def cross_entropy_gradient(a,y):
+   @staticmethod
+   def gradient(a,y):
       return (a-y)/(a*(np.ones(a.shape)-a))
 
-   def cross_entropy(a,y):
-      return -1*np.sum(y*np.log(a) + ((np.ones(y.shape)-y)*np.log(np.ones(a.shape)-a)))
-   
-   mlp.cost_function = cross_entropy 
-   mlp.cost_function_gradient = cross_entropy_gradient
+if __name__ == "__main__":
+ 
+   nn_size = [2, 3, 1]
+   mlp = NeuralNetwork(layer_size=nn_size, 
+                     cost=CrossEntropyCost)
+
 ```
 
 ### MNNIST Example

@@ -1,4 +1,5 @@
 from lib.mlp import NeuralNetwork
+from lb.mlp import CrossEntropyCost
 import numpy as np
 
 if __name__ == "__main__":
@@ -23,22 +24,11 @@ if __name__ == "__main__":
 
    nn_size = [input_size, 3, output_size]
 
-   mlp = NeuralNetwork(nn_size, True)
+   mlp = NeuralNetwork(layer_size=nn_size, 
+                       cost=CrossEntropyCost,
+                       debug_string=True)
 
    batch_size = 10
-
-   # 
-   #  Implement cross-entropy cost function: (Sum for each output neuron)
-   #  C = -sum([yln(a) + (1-y)ln(1-a)])
-   #  gradient(C) = (a-y)/(a(1-a)) 
-   def cross_entropy_gradient(a,y):
-      return (a-y)/(a*(np.ones(a.shape)-a))
-
-   def cross_entropy(a,y):
-      return -1*np.sum(y*np.log(a) + ((np.ones(y.shape)-y)*np.log(np.ones(a.shape)-a)))
-   
-   mlp.cost_function = cross_entropy 
-   mlp.cost_function_gradient = cross_entropy_gradient   
 
    mlp.train(dataset, eta=0.05, threshold=1e-1)
 
