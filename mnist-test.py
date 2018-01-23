@@ -1,17 +1,13 @@
+import numpy as np
+import lib.mlputils as mlputils
+
+import lib.trainingutils as tu
+
 from lib.mlp import NeuralNetwork
 from lib.mlputils import RegularizationL2
 from lib.mlputils import RegularizationL1
-
-import numpy as np
 from mnist import MNIST
 
-def get_one_zero_nn_output(output_size, class_number):
-   out = np.zeros(output_size)
-   if class_number-1 > output_size:
-      return None
-
-   out[class_number-1] = 1
-   return out
 
 if __name__ == "__main__":
    
@@ -31,7 +27,7 @@ if __name__ == "__main__":
    data_set = np.zeros((training_size, input_size+output_size))
 
    for i in range(training_size):
-      l = get_one_zero_nn_output(output_size, labels[i])
+      l = mlputils.get_one_zero_nn_output(output_size, labels[i])
       if l is not None:
          data_set[i] = np.append(training[i]/255, l)
 
@@ -46,9 +42,35 @@ if __name__ == "__main__":
 
    nn_size = [input_size, hidden_size, output_size]
 
-   mlp = NeuralNetwork(layer_size=nn_size, debug_string=True)
+   mlp = NeuralNetwork(layer_size=nn_size)
 
    batch_size = 10
 
    # mlp.train_batch(data_set[:500], batch_size=batch_size, eta=0.05, threshold=1e-3)
-   mlp.train(data_set[:500], eta=0.1, threshold=1e-2)
+   # mlp.train(data_set[:500], eta=0.1, threshold=1e-2)  
+
+   n_folds = 10
+   
+   epoches=10
+   
+   for j in range(epoches):
+      cost_epoch=0
+      acc_epoch=0
+      kfold = tu.k_fold(n_folds, 500)
+      print("*********************************************")
+      print("Epoch {}".format(j))
+      print("*********************************************")
+      for i in range(n_folds):
+         cost, accuracy = tu.train_and_validate_kfold(nn=mlp, 
+                                                      dataset=data_set[:500],
+                                                      folds=kfold, 
+                                                      validation_fold=i,
+                                                      eta=0.1,
+                                                      reg_lmbda=0.01)
+         print("Fold[{}]: Cost={}, Accu={}".format(i, cost, accuracy))
+         cost_epoch += cost
+         acc_epoch += accuracy
+
+      print("_____________________________________________")
+      print(">>>  Cost:{}, Acc: {}".format(cost_epoch/epoches, acc_epoch/epoches))   
+      print("_____________________________________________")

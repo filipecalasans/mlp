@@ -128,14 +128,14 @@ class NeuralNetwork(object):
       return y
          
    '''
-      train: Test Neural Networ: (Stochastic)
+      train: Test Neural Network: (Stochastic)
          @dataset: Numpy Matrix dataset N examples
                            [ [x1_1, x1_2, x2_3, ..., x1_n, y1],
                              [x2_1, x2_2, x2_3, ..., x2_n, y2] 
                              ... t
                              [xn_1, xn_2, xn_3, ..., xn_n, yn] ]
    '''
-   def train(self, dataset, eta=0.1, threshold=1e-3, reg_lmbda = 0.01, max_iterations=0):
+   def train(self, dataset, eta=0.1, threshold=1e-3, reg_lmbda=0.01, max_iterations=0):
       
       if self.is_debug:
          print("Training Neural Network ...")
@@ -167,6 +167,8 @@ class NeuralNetwork(object):
          print(self.training_status(n))
          print("##############################################")
          print("Training is done.")
+      
+      return self.sqerror/n
 
    def update_batch(self, batch, eta=0.1):
 
@@ -404,13 +406,13 @@ class NeuralNetwork(object):
    def classify(self, x):
       
       input_size = self.layer_size[0]
-      
-      if(x.shape[0] is not input_size): 
+
+      if(x.shape[0] != input_size): 
          return None, None
 
       x = x.reshape(input_size, 1)
       
-      outputs = [] # TODO: Optimize
+      outputs = [] 
       outputs.append(x)
 
       for w_index, w_i in enumerate(self.w):
