@@ -1,7 +1,7 @@
 import numpy as np
 import math
 
-#### Miscellaneous functions
+#### Miscellaneous functions and Classes
 def f_sigmoid(x):
     """The sigmoid function."""
     return 1.0/(1.0+math.exp(-x))
@@ -16,17 +16,17 @@ class SigmoidActivation(object):
    '''
    @staticmethod
    def f(x):
-      return 1.0/(1.0+math.exp(-x))
+      return 1.0/(1.0+f_sigmoid(-x))
 
    @staticmethod
    def df(x):
-      return SigmoidActivation.f(x)*(1-SigmoidActivation.f(x))
+      return df_sigmoid(x)
    
 class QuadraticCost(object):
 
    @staticmethod
    def fn(a, y):
-      return 0.5*np.linalg.norm(a-y)**2
+      return 0.5*np.sum((a-y)**2)
 
    @staticmethod
    def gradient(a, y):
