@@ -47,6 +47,16 @@ class CrossEntropyCsst(object):
    def gradient(a,y):
       return (a-y)/(a*(np.ones(a.shape)-a))
 
+class RegularizationNone(object):
+
+   @staticmethod
+   def fn(lmbda, w):
+      return 0
+   
+   @staticmethod
+   def df(lmbda, w):
+      return 0
+
 '''
 
 '''
@@ -72,8 +82,9 @@ class NeuralNetwork(object):
                layer_size=[2,3,1], 
                activation=SigmoidActivation,
                cost=QuadraticCost,
+               regularization=RegularizationNone,
                debug_string=False):
-      
+
       self.activation_function=SigmoidActivation
       self.is_debug = debug_string
       self.layer_size = layer_size
@@ -82,6 +93,8 @@ class NeuralNetwork(object):
       self.eta = 0.1
       self.count = 0
       self.cost = cost
+      self.regularization = regularization
+      self.reg_lmbda = 0.1
 
       self.batch_size = 1
 
@@ -173,7 +186,7 @@ class NeuralNetwork(object):
                              ... t
                              [xn_1, xn_2, xn_3, ..., xn_n, yn] ]
    '''
-   def train(self, dataset, eta=0.1, threshold=1e-3, max_iterations=0):
+   def train(self, dataset, eta=0.1, threshold=1e-3, reg_lmbda = 0.01, max_iterations=0):
       
       if self.is_debug:
          print("Training Neural Network ...")
@@ -183,6 +196,7 @@ class NeuralNetwork(object):
       self.count = 0
       self.eta = eta
       self.threshold = threshold
+      self.reg_lmbda = reg_lmbda
       
       epochs = 0
 
@@ -216,13 +230,14 @@ class NeuralNetwork(object):
          self.forward_and_backpropagate(example)
          self.accumulate_and_apply_learning()
 
-   def train_batch(self, dataset, batch_size, eta=0.1,  threshold=1e-3, max_iterations=0):
+   def train_batch(self, dataset, batch_size, eta=0.1,  reg_lmbda=0.01, threshold=1e-3, max_iterations=0):
       
       if dataset.shape[0]%batch_size is not 0:
          print("[ERROR] len(dataset) % batch_size != 0")
          return
       
       self.threshold = threshold
+      self.reg_lmbda = reg_lmbda
 
       index = np.array(range(dataset.shape[0]))
       
@@ -346,7 +361,8 @@ class NeuralNetwork(object):
       # calculate the error in the output layer 
       # Apply activation function derivative using hadamard product operation
       self.delta[-1] = gradient * self.d_a[-1] 
-      self.sqerror += (self.cost).fn(self.a[-1], y)
+      self.sqerror += ((self.cost).fn(self.a[-1], y) + 
+                        self.regularization.fn(self.reg_lmbda, self.w))
 
    def backpropagate(self):
       '''
@@ -387,7 +403,8 @@ class NeuralNetwork(object):
          # print("Nabla_beta: \n{}\n".format(n_beta))
 
          self.w[l] = self.w[l] - self.eta*n_w          
-         self.beta[l] = self.beta[l] - self.eta*n_beta
+         self.beta[l] = (self.beta[l] - self.eta*n_beta - 
+                        self.regularization.df(self.reg_lmbda, self.w))
 
    def accumulate_and_apply_learning(self):
       '''
@@ -416,7 +433,8 @@ class NeuralNetwork(object):
          if self.count%self.batch_size == 0:
             # print("COUNT: {}, LAYER: {}".format(self.count, l))
             self.w[l] = self.w[l] - ((self.eta/self.batch_size) * self.nabla_w[l])          
-            self.beta[l] = self.beta[l] - ((self.eta/self.batch_size) * self.nabla_beta[l])
+            self.beta[l] = (self.beta[l] - ((self.eta/self.batch_size) * self.nabla_beta[l]) - 
+                           self.regularization.df(self.reg_lmbda, self.w))
             
             self.nabla_w[l] = np.zeros(self.w[l].shape)
             self.nabla_beta[l] = np.zeros(self.beta[l].shape)
