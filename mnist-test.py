@@ -32,7 +32,7 @@ if __name__ == "__main__":
       if l is not None:
          data_set[i] = np.append(training[i]/255, l)
 
-   print("======= Dataset =========\n{}".format(data_set[2]))
+   # print("======= Dataset =========\n{}".format(data_set[2]))
    
    max_col = np.amax(data_set, axis=0)
    min_col = np.amin(data_set, axis=0)
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
    nn_size = [input_size, hidden_size, output_size]
 
-   mlp = NeuralNetwork(nn_size, True)
+   mlp = NeuralNetwork(layer_size=nn_size, debug_string=True)
 
    batch_size = 10
 

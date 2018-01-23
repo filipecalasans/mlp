@@ -1,6 +1,28 @@
 import numpy as np
 import math
 
+#### Miscellaneous functions
+def f_sigmoid(x):
+    """The sigmoid function."""
+    return 
+
+def df_sigmoid(x):
+    """Derivative of the sigmoid function."""
+    return 
+
+
+class SigmoidActivation(object):
+   '''
+      Sigmoid Activation Function. This's the default activation function.
+   '''
+   @staticmethod
+   def f(x):
+      return 1.0/(1.0+math.exp(-x))
+
+   @staticmethod
+   def df(x):
+      return SigmoidActivation.f(x)*(1-SigmoidActivation.f(x))
+   
 '''
 
 '''
@@ -22,8 +44,12 @@ class NeuralNetwork(object):
 
          * We can baypass the input layer.
    '''
-   def __init__(self, layer_size=[2,3,1], debug_string=False):
+   def __init__(self, 
+               layer_size=[2,3,1], 
+               activation=SigmoidActivation,
+               debug_string=False):
       
+      self.activation_function=SigmoidActivation
       self.is_debug = debug_string
       self.layer_size = layer_size
       self.sqerror = 0
@@ -94,7 +120,7 @@ class NeuralNetwork(object):
    # Activation function A[L].
    # Where A = Tau(Z)
    def apply_activation_function(self, x_array):
-      fnet = np.vectorize(self.activation_function)
+      fnet = np.vectorize((self.activation_function).f)
       y = fnet(x_array)
       return y 
    
@@ -109,34 +135,34 @@ class NeuralNetwork(object):
     d_A = Tau'(Z)
    '''
    def apply_d_activation_function(self, x_array):
-      d_fnet = np.vectorize(self.d_activation_function)
+      d_fnet = np.vectorize((self.activation_function).df)
       y = d_fnet(x_array)
       return y
          
-   '''
-      Default activation function 
-   '''
-   def sigmoid(self, x):
-      return 1/(1+math.exp(-x))
+   # '''
+   #    Default activation function 
+   # '''
+   # def sigmoid(self, x):
+   #    return 1/(1+math.exp(-x))
    
-   '''
-      Default activation function derivative 
-   '''
-   def d_sigmoid(self, x):
-      return self.sigmoid(x)*(1 - self.sigmoid(x))
+   # '''
+   #    Default activation function derivative 
+   # '''
+   # def d_sigmoid(self, x):
+   #    return self.sigmoid(x)*(1 - self.sigmoid(x))
    
    ''' If you want to change the activation 
-       function, you need only to override the following two functions.
+       function, you need od_sigmoidnly to override the following two functions.
        tau(zl) [activation_function] and tau'(zl) [d_activation_function].
 
        @x: float value.
 
    '''
-   def activation_function(self, x):
-      return self.sigmoid(x)
+   # def activation_function(self, x):
+   #    return self.sigmoid(x)
 
-   def d_activation_function(self, x):
-      return self.d_sigmoid(x)
+   # def d_activation_function(self, x):
+   #    return self.d_sigmoid(x)
    
    '''
       train: Test Neural Networ: (Stochastic)

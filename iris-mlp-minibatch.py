@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
    nn_size = [input_size, 3, output_size]
 
-   mlp = NeuralNetwork(nn_size, True)
+   mlp = NeuralNetwork(layer_size=nn_size, debug_string=True)
 
    batch_size = 10
 

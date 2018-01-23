@@ -23,7 +23,7 @@ if __name__ == "__main__":
    print("DataSet: {}".format(dataset))
    print("NN SIZE {}".format(nn_size))
 
-   mlp = NeuralNetwork(nn_size, True)
+   mlp = NeuralNetwork(layer_size=[2,3,1]nn_size, debug_string=True)
    
    mlp.train(dataset, eta=0.1, threshold=1e-3, max_iterations=100000)
 
