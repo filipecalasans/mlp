@@ -1,84 +1,85 @@
 import numpy as np
 import math
+import lib.mlputils as mlputils
 
 #### Miscellaneous functions and Classes
-def f_sigmoid(x):
-    """The sigmoid function."""
-    return 1.0/(1.0+math.exp(-x))
+# def f_sigmoid(x):
+#     """The sigmoid function."""
+#     return 1.0/(1.0+math.exp(-x))
 
-def df_sigmoid(x):
-    """Derivative of the sigmoid function."""
-    return f_sigmoid(x)*(1-f_sigmoid(x))
+# def df_sigmoid(x):
+#     """Derivative of the sigmoid function."""
+#     return f_sigmoid(x)*(1-f_sigmoid(x))
 
-class SigmoidActivation(object):
-   '''
-      Sigmoid Activation Function. This's the default activation function.
-   '''
-   @staticmethod
-   def f(x):
-      return f_sigmoid(x)
+# class SigmoidActivation(object):
+#    '''
+#       Sigmoid Activation Function. This's the default activation function.
+#    '''
+#    @staticmethod
+#    def f(x):
+#       return f_sigmoid(x)
 
-   @staticmethod
-   def df(x):
-      return df_sigmoid(x)
+#    @staticmethod
+#    def df(x):
+#       return df_sigmoid(x)
    
-class QuadraticCost(object):
-   @staticmethod
-   def fn(a, y):
-      error = (a-y)
-      return 0.5*np.sum(error**2)
+# class QuadraticCost(object):
+#    @staticmethod
+#    def fn(a, y):
+#       error = (a-y)
+#       return 0.5*np.sum(error**2)
 
-   @staticmethod
-   def gradient(a, y):
-      return (a-y)
+#    @staticmethod
+#    def gradient(a, y):
+#       return (a-y)
 
-class CrossEntropyCost(object):
-   #  Implement cross-entropy cost function: (Sum for each output neuron)
-   #  C = -sum([yln(a) + (1-y)ln(1-a)])
-   @staticmethod
-   def fn(a,y):
-      return -1*np.sum(y*np.log(a) + 
-            ((np.ones(y.shape)-y)*np.log(np.ones(a.shape)-a)))
+# class CrossEntropyCost(object):
+#    #  Implement cross-entropy cost function: (Sum for each output neuron)
+#    #  C = -sum([yln(a) + (1-y)ln(1-a)])
+#    @staticmethod
+#    def fn(a,y):
+#       return -1*np.sum(y*np.log(a) + 
+#             ((np.ones(y.shape)-y)*np.log(np.ones(a.shape)-a)))
 
-   #gradient(C) = (a-y)/(a(1-a))
-   @staticmethod
-   def gradient(a,y):
-      return (a-y)/(a*(np.ones(a.shape)-a))
+#    #gradient(C) = (a-y)/(a(1-a))
+#    @staticmethod
+#    def gradient(a,y):
+#       return (a-y)/(a*(np.ones(a.shape)-a))
 
-class RegularizationNone(object):
-   @staticmethod
-   def fn(lmbda, n, w):
-      return 0
+# class RegularizationNone(object):
+#    @staticmethod
+#    def fn(lmbda, n, w):
+#       return 0
    
-   @staticmethod
-   def df(lmbda, n, w):
-      return 0
+#    @staticmethod
+#    def df(lmbda, n, w):
+#       return 0
 
-class RegularizationL1(object):
-   @staticmethod
-   def fn(lmbda, n, w):
-      w_sum = 0
-      for wi in w:
-         w_sum += np.sum(wi)
+# class RegularizationL1(object):
+#    @staticmethod
+#    def fn(lmbda, n, w):
+#       w_sum = 0
+#       for wi in w:
+#          w_sum += np.sum(wi)
 
-      return (lmbda*w_sum)/n
+#       return (lmbda*w_sum)/n
    
-   @staticmethod
-   def df(lmbda, n, w):
-      return [ (lmbda*np.sign(wi))/n for wi in w] 
+#    @staticmethod
+#    def df(lmbda, n, w):
+#       return [ (lmbda*np.sign(wi))/n for wi in w] 
 
-class RegularizationL2(object):
-   @staticmethod
-   def fn(lmbda, n, w):
-      w_sum = 0
-      for wi in w:
-         w_sum += np.sum(wi**2)
+# class RegularizationL2(object):
+#    @staticmethod
+#    def fn(lmbda, n, w):
+#       w_sum = 0
+#       for wi in w:
+#          w_sum += np.sum(wi**2)
 
-      return (0.5*lmbda*w_sum)/n
+#       return (0.5*lmbda*w_sum)/n
    
-   @staticmethod
-   def df(lmbda, n, w):
-      return [ (lmbda*wi)/n for wi in w]
+#    @staticmethod
+#    def df(lmbda, n, w):
+#       return [ (lmbda*wi)/n for wi in w]
       
 
 '''
@@ -104,12 +105,12 @@ class NeuralNetwork(object):
    '''
    def __init__(self, 
                layer_size=[2,3,1], 
-               activation=SigmoidActivation,
-               cost=QuadraticCost,
-               regularization=RegularizationNone,
+               activation=mlputils.SigmoidActivation,
+               cost=mlputils.QuadraticCost,
+               regularization=mlputils.RegularizationNone,
                debug_string=False):
 
-      self.activation_function=SigmoidActivation
+      self.activation_function=activation
       self.is_debug = debug_string
       self.layer_size = layer_size
       self.sqerror = 0
@@ -117,7 +118,7 @@ class NeuralNetwork(object):
       self.eta = 0.1
       self.count = 0
       self.cost = cost
-      self.regularization = regularization
+      self.regularization=regularization
       self.reg_lmbda = 0.1
 
       self.batch_size = 1

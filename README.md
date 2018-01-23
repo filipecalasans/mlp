@@ -50,6 +50,6 @@ I implement a Neural Network that learns to classify handwritten numbers from th
 The examples is still missing a more realistic training strategy, which involves splitting the data set on validation and training data sets, such as K-fold Cross validation.
 
 ### TODO
-   * Regularization L1, L2, using static methods on Regularization Class.
+   * Save, Load Network to File.
    * Plot performance x epoch
    * Implement K-fold Cross-validation

@@ -1,6 +1,6 @@
 from lib.mlp import NeuralNetwork
-from lib.mlp import RegularizationL2
-from lib.mlp import RegularizationL1
+from lib.mlputils import RegularizationL2
+from lib.mlputils import RegularizationL1
 
 import numpy as np
 from mnist import MNIST
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
    nn_size = [input_size, hidden_size, output_size]
 
-   mlp = NeuralNetwork(layer_size=nn_size, regularization=RegularizationL2, debug_string=True)
+   mlp = NeuralNetwork(layer_size=nn_size, debug_string=True)
 
    batch_size = 10
 
