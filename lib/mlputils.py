@@ -85,6 +85,22 @@ class RegularizationL2(object):
    def df(lmbda, n, w):
       return [ (lmbda*wi)/n for wi in w]
 
+
+regularization_available = {
+   RegularizationNone.__name__: RegularizationNone,
+   RegularizationL1.__name__: RegularizationL1,
+   RegularizationL2.__name__: RegularizationL2,
+}
+
+activation_function_available = {
+  SigmoidActivation.__name__: SigmoidActivation,
+}
+
+cost_function_available = {
+   QuadraticCost.__name__: QuadraticCost,
+   CrossEntropyCost.__name__: CrossEntropyCost,
+}
+
 # class_number (0,output_size-1)
 def get_one_zero_nn_output(output_size, class_number):
    out = np.zeros(output_size)

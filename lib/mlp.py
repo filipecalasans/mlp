@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import lib.mlputils as mlputils
+import json
 
 '''
 
@@ -73,34 +74,74 @@ class NeuralNetwork(object):
       for wi in self.w:
           self.n_weights += wi.shape[0]*wi.shape[1] 
 
-      # if self.is_debug:
-      #    print("W:\n{}".format(self.w))
-      #    print("Beta:\n{}".format(self.beta))
-      #    print("nabla_w:\n{}".format(self.nabla_w))
-      #    print("nabla_beta:\n{}".format(self.nabla_beta))
-
       for l in range(0, len(layer_size)):
          # a = [[x1, x2, ..., xn].T, [a_11, a1_2, ..., a_1n].T, .... [a_L1, a_L2, ..., a_Ln].T]
          # vector list contains the input layer output vector, which is equal to the 
          # input vector for a given example.
          self.a.append(np.zeros((layer_size[l], 1)))
       
-      # if self.is_debug:
-      #    print("A: {}".format(self.a))
-      
       # derivative of the activation function
       self.d_a = list(self.a)
-      
-      # if self.is_debug:
-      #    print("d_A: {}".format(self.d_a))
-      
+       
       # delta[L] = (y - ŷ) * d_a[L]     ===> for the output layer in a L-depth network
       # delta[l] = w[l+1]*delta[l+1] (o) d_a[l] ===> for the Hidden layers
       # where (o) is the Hadamard product
       self.delta =  list(self.a)
       
-      # if self.is_debug:
-      #    print("delta: {}".format(self.delta))
+   def load(self, filepath):
+      nn_json = {}
+      with open(filepath, 'r') as infile:
+         nn_json = json.load(infile)
+         infile.close()
+         self.restore_from_json(nn_json)
+
+   def restore_from_json(self, json_dict):
+      if "eta" in json_dict:
+         self.eta = json_dict["eta"]
+      if "threshold" in json_dict:
+         self.threshold = json_dict["threshold"]
+      if "layer_size" in json_dict:
+         self.layer_size = json_dict["layer_size"]
+      if "debug" in json_dict:
+         self.is_debug = json_dict["debug"]
+      if "regularization" in json_dict:
+         self.regularization = mlputils.regularization_available[
+            json_dict["regularization"]]
+      if "regularization_lambda" in json_dict:
+         self.reg_lmbda = json_dict["regularization_lambda"]
+      if "activation" in json_dict:
+         self.activation_function = mlputils.activation_function_available[
+            json_dict["activation"]]
+      if "batch_size" in json_dict:
+         self.batch_size = json_dict["batch_size"]
+      if "cost_type" in json_dict:
+         self.cost = mlputils.cost_function_available[
+            json_dict["cost_type"]]
+      if "weights" in json_dict:
+         weights = json_dict["weights"]
+         self.w = [np.array(wi) for wi in weights]
+      if "betas" in json_dict:
+         betas = json_dict["betas"]
+         self.beta = [np.array(bi) for bi in betas]
+
+   def save(self, filepath):
+      nn_json = {
+         "eta": self.eta,
+         "threshold": self.threshold,
+         "layer_size": self.layer_size,
+         "debug": self.is_debug,
+         "regularization": self.regularization.__name__,
+         "regularization_lambda": self.reg_lmbda,
+         "activation": self.activation_function.__name__,
+         "batch_size": self.batch_size,
+         "cost_type": self.cost.__name__,
+         "weights": [ wi.tolist() for wi in self.w],
+         "betas": [ bi.tolist() for bi in self.beta], 
+      }
+
+      with open(filepath, 'w') as outfile:
+         json.dump(nn_json, outfile)
+         outfile.close()
 
    # Hadamard Product of the activation function (Tau) over the
    # net vector. net vector is the vector Z[l]
