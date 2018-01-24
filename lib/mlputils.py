@@ -85,11 +85,11 @@ class RegularizationL2(object):
    def df(lmbda, n, w):
       return [ (lmbda*wi)/n for wi in w]
 
-      
+# class_number (0,output_size-1)
 def get_one_zero_nn_output(output_size, class_number):
    out = np.zeros(output_size)
-   if class_number-1 > output_size:
+   if class_number >= output_size:
       return None
 
-   out[class_number-1] = 1
+   out[class_number] = 1
    return out

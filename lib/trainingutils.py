@@ -15,30 +15,36 @@ def k_fold(k, dataset_size):
 def train_and_validate_kfold(nn, dataset, folds, validation_fold, 
                              eta=0.1, reg_lmbda=0.01):
    cost = 0
-   accuracy = 0
-   
-   print("=========== Validation Fold {} ===============".format(validation_fold))
+   print("=========== Validation Fold # {} ===============".format(validation_fold))
 
    for i,fold in enumerate(folds):
       if i != validation_fold:
          # print("Trainig Fold[{}]".format(i))
-         cost += nn.train(dataset[fold], eta=eta, threshold=-1, reg_lmbda=reg_lmbda, max_iterations=1)
+         cost += nn.train(dataset[fold], eta=eta, threshold=-1, reg_lmbda=reg_lmbda, max_iterations=1)   
    
-   print("Cost={}".format(cost/(len(folds)-1)))
+   cost = cost/(len(folds)-1)
+   print("Cost={}".format(cost))
 
    validation_dataset = dataset[folds[validation_fold],:]
-   validation_size = validation_dataset.shape[0]
+   accuracy = validate_model(nn, validation_dataset)
+
+   return cost, accuracy
+
+
+def validate_model(nn, dataset):
+   accuracy = 0
+   validation_size = dataset.shape[0]
    input_size = nn.layer_size[0]
 
    for i in range(validation_size):
-      validation_example = validation_dataset[i, :input_size]
-      y_example = validation_dataset[i, input_size:]
+      validation_example = dataset[i, :input_size]
+      y_example = dataset[i, input_size:]
 
       out_full, out_layer = nn.classify(validation_example)
       
       if out_layer is None:
          print("Error in the NN. Output Layer == None")
-         exit()
+         return 0.0
 
       y = np.around(out_layer)
       # print("ŷ={}, y={}".format(y.flatten(),  y_example.flatten()))
@@ -47,12 +53,8 @@ def train_and_validate_kfold(nn, dataset, folds, validation_fold,
 
    print("Acc: {} / {}".format(accuracy, validation_size))
 
-   cost = cost/(len(folds)-1)
    accuracy = accuracy/validation_size
-   return cost, accuracy
-
-def validate_model(nn, examples, classes):
-   pass
+   return accuracy
 
 def plot_accuracy(accuracy, epoch, labels):
    pass
