@@ -84,7 +84,8 @@ if __name__ == "__main__":
 
    nn_size = [input_size, hidden_size, output_size]
    
-   dataset_size = dataset.shape[0] 
+   # dataset_size = dataset.shape[0] 
+   dataset_size = 100 
 
    mlp = NeuralNetwork(layer_size=nn_size)
    
@@ -97,7 +98,7 @@ if __name__ == "__main__":
    performance_training = train_model(nn=mlp, 
                                        dataset=dataset[examples_used], 
                                        eta=0.1, 
-                                       epoches=10, 
+                                       epoches=5, 
                                        n_folds=5, 
                                        reg_lmbda=0.01, 
                                        debug=True)
@@ -117,3 +118,15 @@ if __name__ == "__main__":
    acc_validation = tu.validate_model(nn=mlp, dataset=dataset_test)
 
    print(">> Validation Dataset Accuracy: {}".format(acc_validation))
+
+   mlp.save("model.json")
+
+   mlp2 = NeuralNetwork()
+   mlp2.load("model.json")
+
+   acc_validation = tu.validate_model(nn=mlp2, dataset=dataset_test)
+   print(">> Validation Dataset Accuracy: {}".format(acc_validation))
+
+
+
+
