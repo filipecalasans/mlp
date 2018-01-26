@@ -64,7 +64,7 @@ class RegularizationL1(object):
    def fn(lmbda, n, w):
       w_sum = 0
       for wi in w:
-         w_sum += np.sum(wi)
+         w_sum += np.sum(np.absolute(wi))
 
       return (lmbda*w_sum)/n
    
