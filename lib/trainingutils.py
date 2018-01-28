@@ -1,4 +1,6 @@
 import numpy as np 
+import matplotlib.pyplot as plt
+
 from lib.mlp import NeuralNetwork
 
 def k_fold(k, dataset_size):
@@ -56,9 +58,9 @@ def validate_model(nn, dataset):
    accuracy = accuracy/validation_size
    return accuracy
 
-def plot_accuracy(accuracy, epoch, labels):
+def plot_accuracy(accuracy):
    pass
 
-def plot_cost_function(error, epoch, labels):
+def plot_cost_function(error):
    pass
 
