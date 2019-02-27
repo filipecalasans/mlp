@@ -18,7 +18,7 @@ The source code is provided in *iris-mlp-minibatch.py* and dataset in the file *
 
 ### Cross-Entropy Cost Function (Switching the Neural Network Cost Function)
 
-The source file *cross-entropy-cost-function.py* applies a NN with Cross-Entropy Cost function over the Iris Data Set. I show in this example that in order to implement different cost functions, users must provide the NeuralNetwork construct with a class with two static methods: *fn*(Cost Functon) and *gradient* (Function Gradient).
+The source file *cross-entropy-cost-function.py* applies a NN with Cross-Entropy Cost function over the Iris Dataset. This example shows that in order to implement different cost functions, users must provide the NeuralNetwork construct with a class with two static methods: *fn*(Cost Functon) and *gradient* (Function Gradient).
    
 ```python
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
 ### MNNIST Example
 
-I implemented a Neural Network that learns to classify handwritten numbers from the MNIST dataset. I used a 3rd-party package to load the MNIST dataset into numpy arrays. I use k-fold cross validation as training strategy and the MNIST Test data set to validate the model. You'll find the source code in the file *mnist-test.py*. 
+I implemented a Neural Network that learns to classify handwritten numbers from the MNIST dataset. I used a 3rd-party package to load the MNIST dataset into numpy arrays. I used k-fold cross validation as training strategy and the MNIST Test dataset to validate the model. You'll find the source code in the file *mnist-test.py*. 
 
 
 ### TODO
