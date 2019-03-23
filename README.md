@@ -70,15 +70,15 @@ Let's make a hypothetical experiment. Let's say we have a data set with 10 examp
 
 where, *<x1, x2, x3, ...., Xn>* is the input and *Y* is the correct class for the example. Now, we randomly generates a set of initial weights <w1, w2, w3, ..., wn> and biases <b1, b2, b3,..., bn>. We should be able to describe how far we are from classifying the examples correctly, so we can take the best action to improve our classifier. That is the point that **Cost Function** comes in handy. On vary popular **Cost Function** is the quadratic error difference, given by:
 
-<p align="center"><img src="/tex/2ecf21aed27ba9ad55a759d750ceea5e.svg?invert_in_darkmode&sanitize=true" align=middle width=222.89986785000002pt height=19.68035685pt/></p>
+<p align="center"><img src="/tex/04e64d5ea2d36f14cda8216b8bf53250.svg?invert_in_darkmode&sanitize=true" align=middle width=200.89052114999998pt height=19.68035685pt/></p>
 
 This formula tells that, for a given set of wights and biases (w,b), the cost is the distance between the right classification *Y* and the estimated classification *Ŷ* squared. On 1-dimensional problems, such as *Perceptron*, the distance is simply the difference, on N-dimensional problems the value is the module of the vectorial distance between the two vectors.
 
 In this context, SGD is a method to update *(w,b)* interactively towards one of the minimum of the function *C(w,b)*. SGD defines the following two update equations, also called in this article learning equations:
 
-<img src="/tex/89f5c9814e481da0a4ebf973aa172e96.svg?invert_in_darkmode&sanitize=true" align=middle width=212.08990769999997pt height=28.92634470000001pt/>
+<p align="center"><img src="/tex/d331d380fd0a6d117e0da1a5c2c36099.svg?invert_in_darkmode&sanitize=true" align=middle width=212.19357885pt height=21.7756011pt/></p>
 
-<img src="/tex/8d739d45c40fa28f36bb0b79a7c42c15.svg?invert_in_darkmode&sanitize=true" align=middle width=198.93362939999997pt height=28.92634470000001pt/>
+<p align="center"><img src="/tex/68e62b90c9f31524c7c7b4a8e7b4cdb8.svg?invert_in_darkmode&sanitize=true" align=middle width=201.0112797pt height=21.7756011pt/></p>
 
 These two equations tells that we must every interaction of the algorithm we update the weights and biases by a fraction *<img src="/tex/1d0496971a2775f4887d1df25cea4f7e.svg?invert_in_darkmode&sanitize=true" align=middle width=8.751954749999989pt height=14.15524440000002pt/>*
 
