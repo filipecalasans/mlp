@@ -16,8 +16,7 @@ MLP is a biologic inspired algorithm that mimics biologic neural networks. Howev
 
 Mathematically speaking, a neuron output is given by by:
 
-\Large
-<p align="center"><img src="/tex/1cb0ca6afabd7130363996f8432c92e1.svg?invert_in_darkmode&sanitize=true" align=middle width=171.03519675pt height=18.150897599999997pt/></p>
+<p align="center"><img src="/tex/33999e575ed694ec54041180800e14de.svg?invert_in_darkmode&sanitize=true" align=middle width=171.03519675pt height=18.150897599999997pt/></p>
 
 ![Perceptron](doc/perceptron.png)
 
