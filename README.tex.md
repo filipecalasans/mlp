@@ -12,16 +12,35 @@ Hope this document can help you on your learning journey. Good Luck !
 
 # Mathematical Formulation
 
-MLP is a biologic inspired algorithm that mimics biologic neural networks. However, instead of real neurons and synapses, MLPs are composed by mathematical neurons, and synapses, in this case called weights. Neurons are arranged in layers, and connected between them through weights. The simplest MLP you can build is composed of three layers: Input, Hidden and Output layers. In the classical topology each neuron of a given layer is fully connected with the neurons of the next layer.
-
-Mathematically speaking, a neuron output is given by by:
-
-\begin{equation}
-    \Huge
-    \tau( $\sum_{i=1}^{n} w_{i}*x_{i}$ + b )
-\end{equation}
+MLP is a biologic inspired algorithm that is in biologic neural networks. MLPs are composed by mathematical neurons and its synapses, in this case called weights. Neurons are arranged in layers, and connected between them through weights. The simplest MLP you can build is composed of three layers: Input, Hidden and Output layers. In the classical topology each neuron of a given layer is fully connected with the neurons of the next layer.
+ 
+The picture bellow shows a neuron and its different mathematical components:
 
 ![Perceptron](doc/perceptron.png)
+
+Mathematically speaking, this neuron produces the following output:
+
+\begin{equation}
+    $\tau( $\sum_{i=1}^{n} w_{i}*x_{i}$ + b )$
+\end{equation}
+
+In other words, the output of a neuron is given by a linear combination of its inputs:
+
+\begin{equation}
+$\sum_{i=1}^{n} w_{i}*x_{i}$
+\end{equation}
+
+Adjusted by an offset, called baias, which give us the output **a**:
+
+\begin{equation}
+a = $\sum_{i=1}^{n} w_{i}*x_{i} + b$
+\end{equation}
+
+Then, the output is calculated passing the input to a function denominated **Activation Function**:
+
+\begin{equation}
+$out(t) = \tau(a)$
+\end{equation} 
 
 # Topology 
 
