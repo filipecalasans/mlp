@@ -83,16 +83,20 @@ $Xi = <x1, x2, x3, ...., Xn, Y> :(5)$
 where, *<x1, x2, x3, ...., Xn>* is the input and *Y* is the correct class for the example. Now, we randomly generates a set of initial weights <w1, w2, w3, ..., wn> and biases <b1, b2, b3,..., bn>. We should be able to describe how far we are from classifying the examples correctly, so we can take the best action to improve our classifier. That is the point that **Cost Function** comes in handy. On vary popular **Cost Function** is the quadratic error difference, given by:
 
 \begin{equation*}
-$C(w, b) = ||Y -Ŷ||^2 :(4)$
+$C(w, b) = \|\|Y -Ŷ\|\|^2 :(4)$
 \end{equation*}
 
 This formula tells that, for a given set of wights and biases (w,b), the cost is the distance between the right classification *Y* and the estimated classification *Ŷ* squared. On 1-dimensional problems, such as *Perceptron*, the distance is simply the difference, on N-dimensional problems the value is the module of the vectorial distance between the two vectors.
 
 In this context, SGD is a method to update *(w,b)* interactively towards one of the minimum of the function *C(w,b)*. SGD defines the following two update equations, also called in this article learning equations:
 
+\begin{equation*}
 $w_i(t+1) = w_i(t) - \eta\frac{\partial C}{\partial w_i} :(6)$
+\end{equation*}
 
+\begin{equation*}
 $b_i(t+1) = b_i(t) - \eta\frac{\partial C}{\partial b_i} :(7)$
+\end{equation*}
 
 These two equations tells that we must every interaction of the algorithm we update the weights and biases by a fraction *$\eta$*
 
