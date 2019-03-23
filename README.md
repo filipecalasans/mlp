@@ -12,27 +12,31 @@ Hope this document can help you on your learning journey. Good Luck !
 
 # Mathematical Formulation
 
-MLP is a biologic inspired algorithm that is in biologic neural networks. MLPs are composed by mathematical neurons and its synapses, in this case called weights. Neurons are arranged in layers, and connected between them through weights. The simplest MLP you can build is composed of three layers: Input, Hidden and Output layers. In the classical topology each neuron of a given layer is fully connected with the neurons of the next layer.
- 
+MLPs are composed by mathematical neurons and its synapses, in this case called weights. Neurons are arranged in layers, and connected between them through weights. The simplest MLP you can build is composed of three layers: Input, Hidden and Output layers. In the classical topology each neuron of a given layer is fully connected with the neurons of the next layer. Let's start formulating one neuron, then we move to a more complex scenario.
+
 The picture bellow shows a neuron and its different mathematical components:
 
 ![Perceptron](doc/perceptron.png)
 
 Mathematically speaking, this neuron produces the following output:
 
-<p align="center"><img src="/tex/1cb0ca6afabd7130363996f8432c92e1.svg?invert_in_darkmode&sanitize=true" align=middle width=171.03519675pt height=18.150897599999997pt/></p>
+<p align="center"><img src="/tex/bca955eff640ce0a4a7e5ba0edade07b.svg?invert_in_darkmode&sanitize=true" align=middle width=150.03055485pt height=18.150897599999997pt/></p>
 
 In other words, the output of a neuron is given by a linear combination of its inputs:
 
-<p align="center"><img src="/tex/f8a0591c79d1c7473c781b3428123bda.svg?invert_in_darkmode&sanitize=true" align=middle width=116.32616159999999pt height=18.150897599999997pt/></p>
+<p align="center"><img src="/tex/c9b258787f9400572931bd09a37a5bee.svg?invert_in_darkmode&sanitize=true" align=middle width=121.89697740000001pt height=18.150897599999997pt/></p>
 
 Adjusted by an offset, called baias, which give us the output **a**:
 
-<p align="center"><img src="/tex/0bc44439ad0be8929c10ae9ba9776296.svg?invert_in_darkmode&sanitize=true" align=middle width=363.15734399999997pt height=41.5982457pt/></p>
+2.
+<p align="center"><img src="/tex/7264c26bf3fec47218690001d567b176.svg?invert_in_darkmode&sanitize=true" align=middle width=181.82839289999998pt height=18.150897599999997pt/></p>
 
 Then, the output is calculated passing the input to a function denominated **Activation Function**:
 
-<p align="center"><img src="/tex/dac4d731b9f324c56a24287ce3f1b058.svg?invert_in_darkmode&sanitize=true" align=middle width=123.67235264999998pt height=16.438356pt/></p> 
+
+<p align="center"><img src="/tex/91e7f3a9260a0ba424e5ce269daaf7db.svg?invert_in_darkmode&sanitize=true" align=middle width=161.11534229999998pt height=16.438356pt/></p>
+
+If you remind of Linear Algebra, the equation 
 
 # Topology 
 
