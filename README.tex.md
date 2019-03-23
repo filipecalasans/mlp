@@ -12,35 +12,39 @@ Hope this document can help you on your learning journey. Good Luck !
 
 # Mathematical Formulation
 
-MLP is a biologic inspired algorithm that is in biologic neural networks. MLPs are composed by mathematical neurons and its synapses, in this case called weights. Neurons are arranged in layers, and connected between them through weights. The simplest MLP you can build is composed of three layers: Input, Hidden and Output layers. In the classical topology each neuron of a given layer is fully connected with the neurons of the next layer.
- 
+MLPs are composed by mathematical neurons and its synapses, in this case called weights. Neurons are arranged in layers, and connected between them through weights. The simplest MLP you can build is composed of three layers: Input, Hidden and Output layers. In the classical topology each neuron of a given layer is fully connected with the neurons of the next layer. Let's start formulating one neuron, then we move to a more complex scenario.
+
 The picture bellow shows a neuron and its different mathematical components:
 
 ![Perceptron](doc/perceptron.png)
 
 Mathematically speaking, this neuron produces the following output:
 
-\begin{equation}
+\begin{equation*}
     $\tau( $\sum_{i=1}^{n} w_{i}*x_{i}$ + b )$
-\end{equation}
+\end{equation*}
 
 In other words, the output of a neuron is given by a linear combination of its inputs:
 
-\begin{equation}
-$\sum_{i=1}^{n} w_{i}*x_{i}$
-\end{equation}
+\begin{equation*}
+$(1): \sum_{i=1}^{n} w_{i}*x_{i}$
+\end{equation*}
 
 Adjusted by an offset, called baias, which give us the output **a**:
 
-\begin{equation}
-a = $\sum_{i=1}^{n} w_{i}*x_{i} + b$
-\end{equation}
+2.
+\begin{equation*}
+$(2): a = \sum_{i=1}^{n} w_{i}*x_{i} + b$
+\end{equation*}
 
 Then, the output is calculated passing the input to a function denominated **Activation Function**:
 
-\begin{equation}
-$out(t) = \tau(a)$
-\end{equation} 
+
+\begin{equation*}
+$(3): z = out(t) = \tau(a)$
+\end{equation*}
+
+If you remind of Linear Algebra, the equation 
 
 # Topology 
 
