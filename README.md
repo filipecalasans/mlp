@@ -71,7 +71,7 @@ Let's write the equations for the particular case: 2-2-1 MLP.
 
 Matrix notation:
 
-<p align="center"><img src="/tex/79c61ae047952d49029d3f73bf542fd8.svg?invert_in_darkmode&sanitize=true" align=middle width=404.3665923pt height=90.8553063pt/></p>
+<p align="center"><img src="/tex/5f792519e82c030da96be50cae5e466a.svg?invert_in_darkmode&sanitize=true" align=middle width=248.79407355pt height=39.60032339999999pt/></p>
 
 
 <p align="center"><img src="/tex/73ee4131875a3113112c3b149fbf7cbe.svg?invert_in_darkmode&sanitize=true" align=middle width=192.4050843pt height=39.60032339999999pt/></p>
