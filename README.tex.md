@@ -89,7 +89,6 @@ z_{2}^h
 w_{11}^h && w_{12}^h \\
 w_{21}^h && w_{22}^h  
 \end{bmatrix}
-
 \begin{bmatrix}
 x_{1}^h \\
 x_{2}^h 
@@ -99,7 +98,6 @@ x_{2}^h
 b_{1}^h \\
 b_{2}^h 
 \end{bmatrix}
-
 $$
 
 
