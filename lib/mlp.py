@@ -14,23 +14,25 @@ class NeuralNetwork(object):
    b_init_max = 0.5
    b_init_min = -0.5
 
-   '''   
-      __init__: Initializes the weight array of matrices, the delta array of errors.
-         self.w = [ W_2, W_3, ..., w_(L-1), W_L]
-         self.delta = [delta_2, delta_3, ..., delta_L]
 
-         where W_i for i in [2;L-1] is a mxm weight matrix, where m is th enumber of inputs (hidden layers)
-         and W_L is a matrix nxm, where n is the number of outputs. (Output layer) 
-
-         * We can baypass the input layer.
-   '''
    def __init__(self, 
                layer_size=[2,3,1], 
                activation=mlputils.SigmoidActivation,
                cost=mlputils.QuadraticCost,
                regularization=mlputils.RegularizationNone,
                debug_string=False):
+         
+      '''   
+         Initializes the weight array of matrices, the delta array of errors.
+         self.w = [ W_2, W_3, ..., w_(L-1), W_L]
+         self.delta = [delta_2, delta_3, ..., delta_L]
 
+         where W_i for i in [2;L-1] is a mxm weight matrix, where m is th enumber 
+         of inputs (hidden layers)
+         and W_L is a matrix nxm, where n is the number of outputs. (Output layer) 
+
+         * We can baypass the input layer.
+      '''
       self.activation_function=activation
       self.is_debug = debug_string
       self.layer_size = layer_size

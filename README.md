@@ -97,6 +97,9 @@ Then we'll generalize this particular case to have a general formulation for a g
 
 
 
+
+
+
 # Implementation
 
 # Training and Validating
