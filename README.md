@@ -1,12 +1,12 @@
-
 # Multilayer Perceptron (MLP)
 
-A multilayer perceptron (MLP) is a class of feed-forward artificial neural network(NN). A MLP consists of, at least, three layers of nodes: an input layer, a hidden layer and an output layer. Except for the input nodes, each node is a neuron that uses a nonlinear activation function(Wikipedia).
-In this repository, I present the mathematical formulation and implementation in Python of a MLP. I also train e validate the algorithm against three different data sets, presenting pratical examples of how to use MLP to classify data.
+A multilayer perceptron (MLP) is a class of feed-forward artificial neural network(NN). A MLP consists of, at least, three layers of nodes: an input layer, a hidden layer and an output layer. Except for the input nodes, each node is a neuron that uses a nonlinear activation function (Wikipedia).
+
+In this repository, I present the mathematical formulation and implementation in Python of a MLP. I also train and validate the algorithm against three different data sets, presenting practical examples of how to use MLP to classify data.
 
 # Preamble 
 
-You may be asking yourself: why do we need another MLP explanation in the internet? This repository  provides my thought process after reading several materials when I tried to implement a MLP by myself. At the time, I could understand and implement it only after a lot of reading, and trial and error. So, as I felt the necessity to read different points of views and be exposed to different ways of explaining the same topic, I think others may face the same situation.
+You may be asking yourself: why do we need another Perceptron/MLP explanation in the internet? This repository provides my thought process after reading several materials when I tried to implement a MLP myself. At the time, I was able to understand and implement it only after a lot of reading, and trial and error. So, as I felt the necessity to be exposed to different ways of explaining the same topic, I think others may face the same situation.
 
 Hope this document can help you on your learning journey. Good Luck !
 
@@ -14,97 +14,87 @@ Hope this document can help you on your learning journey. Good Luck !
 
 MLPs are composed by mathematical neurons and its synapses, in this case called weights. Neurons are arranged in layers, and connected between them through weights. The simplest MLP you can build is composed of three layers: Input, Hidden and Output layers. In the classical topology each neuron of a given layer is fully connected with the neurons of the next layer. 
 
-Our ultimate goal is to mathematically formulate a MLP, however there is a simple type of neural network that will help you to build the foundation to understand MLPs. *Perceptron* is single neuron NN as shown in picture bellow.  
+## *Perceptron*
 
-The picture bellow shows a *Perceptron* and its different mathematical components:
-
- <p align="center"> 
-    <img src="doc/perceptron.png" alt="Perceptron">
- </p>
-
-Mathematically speaking, this neuron produces the following output:
-
-<p align="center"><img src="/tex/ab6ccdcaec1038c54a4f13b150c627cf.svg?invert_in_darkmode&sanitize=true" align=middle width=213.13000995pt height=18.150897599999997pt/></p>
-
-In other words, the output of a neuron is given by a linear combination of its inputs:
-
-<p align="center"><img src="/tex/c6e96a9879596512e1ca747f468d060c.svg?invert_in_darkmode&sanitize=true" align=middle width=124.5451383pt height=18.150897599999997pt/></p>
-
-Adjusted by an offset, called baias, which give us output **a**:
-
-2.
-<p align="center"><img src="/tex/bb4580678c77d4c9117cbc9b45affedb.svg?invert_in_darkmode&sanitize=true" align=middle width=183.6546558pt height=18.150897599999997pt/></p>
-
-Then, the output is calculated passing the input to a function denominated **Activation Function**:
-
-<p align="center"><img src="/tex/585d690c417f302f41000ad7e6984a2e.svg?invert_in_darkmode&sanitize=true" align=middle width=162.94160685pt height=16.438356pt/></p>
-
-If you remind of Linear Algebra, the equation *(2)* looks very similar to a hyperplane. Moreover, the equation 
-give us a notion of how far the data sample *X\<x1,x2,x3,...,xn\>* is from the hyperplane:
-
-<p align="center"><img src="/tex/351aaba2c6eea885cab2e44193802227.svg?invert_in_darkmode&sanitize=true" align=middle width=181.82796555pt height=18.150897599999997pt/></p>
-
-Using *Percepron*, we can create a classifier that given an example characterized by the input *X<x1,x2,x3,...,xn>*, it returns if the example is **Class** **A = 0** or **B = 1**, using as decisive factor how far the point is from the hyperplane. If you noticed, this is the role of the **Activation Function** in the equation *(3)*. In this case, the example shows the step function, but as I'll show you later there are better **Activation Functions** that we can use.
-
-## Now, you should be wondering: How does perceptron "learn" the best hyperplane? 
-
-Indeed, the challenge in Machine Learning is: how do we "learn"? *Perceptron* classifiers is a *supervised learning algorithm*, therefore we must provide a set or examples beforehand, from which we'll calculate the best possible hyperplane that separates the examples into two different classes. As you noticed, a single neuron is capable of classifying only two classes. Another characteristic of *Perceptron* is that, it works well only with linearly separable datasets.
-
-Two sets of points are said to be linear separable if there is at least one hyperplane that can separate them in two classes. In two dimensional spaces, you can think as a line that can separate the points on a plane on two different sides. You can read more in [Linear separability - Wikepedia.](https://en.wikipedia.org/wiki/Linear_separability)
-
-
-## Stochastic Gradient Descent (SGD) - How NNs Learn
-
-Neural Networks, including *Perceptron* and *MLP*, apply the method *Stochastic Gradient Descent (SGD)*  on their learning process. SGD is an iterative method for optimizing a differentiable objective function, a stochastic approximation of gradient descent optimization You can find a more formal explanation in [Wikepedia](https://en.wikipedia.org/wiki/Stochastic_gradient_descent).
-
-It may sound confusing, even intimidating. But don't worry we'll get there.
-
-Simplifying, SGD is an algorithm to estimate the minimum of a function.
-SGD is used a lot on the optimization field. In optimization, the ultimate goal is to minimize the *Cost function*, which is the measure of how far we are from the goal. If you have ever studied optimization problems that sounds familiar, if you never heard of optimization problems that is not a problem at all.
-
-The concept of *Cost Function* is also applicable to NNs, and it's mathematically express how far we are from the ultimate goal. The ultimate goal in Classification problems is to define how far we are of classifying the examples correctly.
-
-Let's make a hypothetical experiment. Let's say we have a data set with 10 examples, given by: 
-
-<p align="center"><img src="/tex/8d5b956c0f66255b73784d0c7fddc11f.svg?invert_in_darkmode&sanitize=true" align=middle width=236.98690785pt height=16.438356pt/></p>
-
-where, *<x1, x2, x3, ...., Xn>* is the input and *Y* is the correct class for the example. Now, we randomly generates a set of initial weights <w1, w2, w3, ..., wn> and biases <b1, b2, b3,..., bn>. We should be able to describe how far we are from classifying the examples correctly, so we can take the best action to improve our classifier. That is the point that **Cost Function** comes in handy. On vary popular **Cost Function** is the quadratic error difference, given by:
-
-<p align="center"><img src="/tex/04e64d5ea2d36f14cda8216b8bf53250.svg?invert_in_darkmode&sanitize=true" align=middle width=200.89052114999998pt height=19.68035685pt/></p>
-
-This formula tells that, for a given set of wights and biases (w,b), the cost is the distance between the right classification *Y* and the estimated classification *Ŷ* squared. On 1-dimensional problems, such as *Perceptron*, the distance is simply the difference, on N-dimensional problems the value is the module of the vectorial distance between the two vectors.
-
-In this context, SGD is a method to update *(w,b)* interactively towards one of the minimum of the function *C(w,b)*. SGD defines the following two update equations, also called in this article learning equations:
-
-<p align="center"><img src="/tex/d331d380fd0a6d117e0da1a5c2c36099.svg?invert_in_darkmode&sanitize=true" align=middle width=212.19357885pt height=21.7756011pt/></p>
-
-<p align="center"><img src="/tex/68e62b90c9f31524c7c7b4a8e7b4cdb8.svg?invert_in_darkmode&sanitize=true" align=middle width=201.0112797pt height=21.7756011pt/></p>
-
-These two equations tells that we must every interaction of the algorithm we update the weights and biases by a fraction *<img src="/tex/1d0496971a2775f4887d1df25cea4f7e.svg?invert_in_darkmode&sanitize=true" align=middle width=8.751954749999989pt height=14.15524440000002pt/>*
+Many of the concepts utilized in this articles are explained in the [Perceptron](https://github.com/filipecalasans/percepetron) repository. So, you may want to check it out before continuing to the MLP formulation. Perceptron is the simplest Neural Network composed of a single neuron that helps us to build the theoretical foundation for MLPs. However, if you already have solid understanding of the mathematic concepts used on *Perceptrons*, feel free to skip to the next section.
 
 # Topology 
 
-We'll start formulating a MLP with the following topology: 2-2-1
+We'll start formulating a MLP with the topology 2-2-1 as shown in the picture billow, then we'll generalize from this particular case.
+
+The topology is composed of:
+
 * 2 Input Layer Neurons
 * 2 Hidden Layer neurons
-* 1 Output Layer Neuron
-
-Then we'll generalize this particular case to have a general formulation for a general topology.
+* 1 Output Layer Neuron 
 
  <p align="center"> 
     <img src="doc/mlp-topology.png" alt="MLP Topology">
  </p>
 
+# Formulation
+
+## Notation
+
+We are going to use the following notation across this article:
+
+* <img src="/tex/e7aef05c93fc141752370e7884d53cf7.svg?invert_in_darkmode&sanitize=true" align=middle width=22.523917349999987pt height=27.6567522pt/>: Weight connection between the Neuron number <img src="/tex/36b5afebdba34564d884d347484ac0c7.svg?invert_in_darkmode&sanitize=true" align=middle width=7.710416999999989pt height=21.68300969999999pt/> of the layer <img src="/tex/abf17eec3c78fcd0a21c1803f1ad3c5a.svg?invert_in_darkmode&sanitize=true" align=middle width=39.49764389999999pt height=22.465723500000017pt/> (previous layer) and Neuron number <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> of the layer <img src="/tex/ddcb483302ed36a59286424aa5e0be17.svg?invert_in_darkmode&sanitize=true" align=middle width=11.18724254999999pt height=22.465723500000017pt/> (current layer).
+* <img src="/tex/3cf887b76cd63f28a0b450e37d0b0957.svg?invert_in_darkmode&sanitize=true" align=middle width=16.073120249999988pt height=27.6567522pt/> neuron bias <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> of the layer <img src="/tex/ddcb483302ed36a59286424aa5e0be17.svg?invert_in_darkmode&sanitize=true" align=middle width=11.18724254999999pt height=22.465723500000017pt/> 
+* <img src="/tex/dc80c8df8d6a3120a158fb62653b1321.svg?invert_in_darkmode&sanitize=true" align=middle width=14.045887349999989pt height=14.15524440000002pt/>: Component <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> of the input vector.
+* <img src="/tex/e46f5aa3f3f039ebf21a80fd0cf8fad9.svg?invert_in_darkmode&sanitize=true" align=middle width=12.710331149999991pt height=14.15524440000002pt/>: Component <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> of the expected output vector.
+* <img src="/tex/80c16818f5bacc9e6c2df624c82478fd.svg?invert_in_darkmode&sanitize=true" align=middle width=13.30009889999999pt height=22.831056599999986pt/>: Component <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> of the estimated output vector.
+* <img src="/tex/ce778e6bc5924581f2331d9858245900.svg?invert_in_darkmode&sanitize=true" align=middle width=17.38594274999999pt height=27.6567522pt/>: Output of the Neuron <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> in the layer <img src="/tex/ddcb483302ed36a59286424aa5e0be17.svg?invert_in_darkmode&sanitize=true" align=middle width=11.18724254999999pt height=22.465723500000017pt/> before applying the activation function.
+* <img src="/tex/09be2af89e4dda1eb9b38aaa3e5d9a24.svg?invert_in_darkmode&sanitize=true" align=middle width=17.70747824999999pt height=27.6567522pt/>:Output of the neuron <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/> in the layer <img src="/tex/ddcb483302ed36a59286424aa5e0be17.svg?invert_in_darkmode&sanitize=true" align=middle width=11.18724254999999pt height=22.465723500000017pt/> after applying the activation function.
+* <img src="/tex/8cda31ed38c6d59d14ebefa440099572.svg?invert_in_darkmode&sanitize=true" align=middle width=9.98290094999999pt height=14.15524440000002pt/>: activation function
+## Matrix Notation
+
+* <img src="/tex/57b2cba25e280b2de8bf26312cb12268.svg?invert_in_darkmode&sanitize=true" align=middle width=26.826581099999988pt height=27.6567522pt/>: Weight connection matrix of Layer the <img src="/tex/ddcb483302ed36a59286424aa5e0be17.svg?invert_in_darkmode&sanitize=true" align=middle width=11.18724254999999pt height=22.465723500000017pt/>.
+* <img src="/tex/094f53458217273445ccce7baf12d6ac.svg?invert_in_darkmode&sanitize=true" align=middle width=22.31172734999999pt height=27.6567522pt/>: bias vector of the layer <img src="/tex/ddcb483302ed36a59286424aa5e0be17.svg?invert_in_darkmode&sanitize=true" align=middle width=11.18724254999999pt height=22.465723500000017pt/>. 
+* <img src="/tex/cbfb1b2a33b28eab8a3e59464768e810.svg?invert_in_darkmode&sanitize=true" align=middle width=14.908688849999992pt height=22.465723500000017pt/>: Input vector
+* <img src="/tex/91aac9730317276af725abd8cef04ca9.svg?invert_in_darkmode&sanitize=true" align=middle width=13.19638649999999pt height=22.465723500000017pt/>: Expected output vector. This vector represents a known class.
+* <img src="/tex/29ca0449252d1ae4e25240e835c5107b.svg?invert_in_darkmode&sanitize=true" align=middle width=13.19638649999999pt height=31.141535699999984pt/>: Estimated output vector. This vector represents the computed output of the Neural Network.
+* <img src="/tex/fe79bd004eef79327b7ab06a50349f2a.svg?invert_in_darkmode&sanitize=true" align=middle width=21.41559254999999pt height=27.6567522pt/>: Neuron Output vector before applying the activation function.
+* <img src="/tex/8bb3167ecf0fa0108755856809faee3d.svg?invert_in_darkmode&sanitize=true" align=middle width=21.34712249999999pt height=27.6567522pt/>: Neuron Output vector after applying the activation function.
+* <img src="/tex/2f118ee06d05f3c2d98361d9c30e38ce.svg?invert_in_darkmode&sanitize=true" align=middle width=11.889314249999991pt height=22.465723500000017pt/>: Training Example: The tuple <img src="/tex/461d196408c16404dbc26594468bd95d.svg?invert_in_darkmode&sanitize=true" align=middle width=98.44159214999999pt height=22.465723500000017pt/> defines a training example.
+
+Let's write the equations for the particular case: 2-2-1 MLP.
+
+### Hidden Layer
+
+<p align="center"><img src="/tex/d7708558c35c81d779cd31487977a226.svg?invert_in_darkmode&sanitize=true" align=middle width=178.66631145pt height=18.84197535pt/></p>
+
+<p align="center"><img src="/tex/6703fbd3aeae884740fa45bcbe4a67be.svg?invert_in_darkmode&sanitize=true" align=middle width=178.66631145pt height=18.84197535pt/></p>
+
+<p align="center"><img src="/tex/988505df6489ecbbaa8d3bf22a458665.svg?invert_in_darkmode&sanitize=true" align=middle width=78.77860155pt height=18.88772655pt/></p>
+
+<p align="center"><img src="/tex/a374c448d293c60a4003639b733ee15f.svg?invert_in_darkmode&sanitize=true" align=middle width=78.77860155pt height=18.88772655pt/></p>
+
+Matrix notation:
+
+<p align="center"><img src="/tex/79c61ae047952d49029d3f73bf542fd8.svg?invert_in_darkmode&sanitize=true" align=middle width=404.3665923pt height=90.8553063pt/></p>
 
 
+<p align="center"><img src="/tex/73ee4131875a3113112c3b149fbf7cbe.svg?invert_in_darkmode&sanitize=true" align=middle width=192.4050843pt height=39.60032339999999pt/></p>
+
+Algebric matrix equation:
+
+<p align="center"><img src="/tex/b06fed030a14f77906a3dd28687bdbf2.svg?invert_in_darkmode&sanitize=true" align=middle width=129.11521919999998pt height=16.0201668pt/></p>
 
 
+<p align="center"><img src="/tex/b476e3c976491c89cd024121a9741db6.svg?invert_in_darkmode&sanitize=true" align=middle width=89.0924892pt height=18.7598829pt/></p>
 
-# Implementation
+### Output Layer
 
-# Training and Validating
+The same formulation can be applied for the output layer. However the input for the output layer is the output of the previous layer.
+<p align="center"><img src="/tex/2c2bd7c458ee8ce879403ef1c592e15e.svg?invert_in_darkmode&sanitize=true" align=middle width=133.1177463pt height=16.0201668pt/></p>
+
+<p align="center"><img src="/tex/85cf3dbb171380e7420424d3eb189e62.svg?invert_in_darkmode&sanitize=true" align=middle width=91.7608131pt height=18.7598829pt/></p>
+
+
 
 # Example MLP Library usage
+
+
 
 ## XOR Gate
 
