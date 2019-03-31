@@ -135,13 +135,28 @@ $$
 
 The same formulation can be applied for the output layer. However the input for the output layer is the output of the previous layer.
 $$
-Z^O = W^OX+B^O
+Z^O = W^OA^{L-1}+B^O
 $$
 
 $$
 A^O = \sigma(Z^O)
 $$
 
+### Generalized Notation
+
+We can generalize the previous formulas on any neural network notation. We can say that the weight in the input layer is always the identity matrix $I$, and the bias matrix is always zero. Then, we can use a single equation to represent the output of a given layer L.
+
+$$
+Z^L = W^LA^{L-1}+B^L
+$$
+
+$$
+A^L = \sigma(Z^L)
+$$
+
+$$
+A^L = \sigma(W^LA^{L-1}+B^L)
+$$
 
 
 # Example MLP Library usage
