@@ -133,7 +133,8 @@ $$
 
 ### Output Layer
 
-The same formulation can be applied for the output layer. However the input for the output layer is the output of the previous layer.
+The same formulation can be applied for the output layer. However,the input will be the previous layer's output $A^{L-1}$.
+
 $$
 Z^O = W^OA^{L-1}+B^O
 $$
@@ -144,7 +145,7 @@ $$
 
 ### Generalized Notation
 
-We can generalize the previous formulas on any neural network notation. We can say that the weight in the input layer is always the identity matrix $I$, and the bias matrix is always zero. Then, we can use a single equation to represent the output of a given layer L.
+We can generalize the previous formulas to any neural network topology. We can assume that the weight matrix for the input layer is identity matrix $I$, and the bias matrix is zero. Then, we can use a single equation to represent the output of a given layer L.
 
 $$
 Z^L = W^LA^{L-1}+B^L
