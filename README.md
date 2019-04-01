@@ -85,14 +85,15 @@ Algebric matrix equation:
 
 ### Output Layer
 
-The same formulation can be applied for the output layer. However the input for the output layer is the output of the previous layer.
+The same formulation can be applied for the output layer. However,the input will be the previous layer's output <img src="/tex/12d0b3f47becd314d9dc6b1d1e206cc4.svg?invert_in_darkmode&sanitize=true" align=middle width=38.173690499999985pt height=27.6567522pt/>.
+
 <p align="center"><img src="/tex/f4440a33c20e911a9276102e5f8e8274.svg?invert_in_darkmode&sanitize=true" align=middle width=157.20465585pt height=16.0201668pt/></p>
 
 <p align="center"><img src="/tex/85cf3dbb171380e7420424d3eb189e62.svg?invert_in_darkmode&sanitize=true" align=middle width=91.7608131pt height=18.7598829pt/></p>
 
 ### Generalized Notation
 
-We can generalize the previous formulas on any neural network notation. We can say that the weight in the input layer is always the identity matrix <img src="/tex/21fd4e8eecd6bdf1a4d3d6bd1fb8d733.svg?invert_in_darkmode&sanitize=true" align=middle width=8.515988249999989pt height=22.465723500000017pt/>, and the bias matrix is always zero. Then, we can use a single equation to represent the output of a given layer L.
+We can generalize the previous formulas to any neural network topology. We can assume that the weight matrix for the input layer is identity matrix <img src="/tex/21fd4e8eecd6bdf1a4d3d6bd1fb8d733.svg?invert_in_darkmode&sanitize=true" align=middle width=8.515988249999989pt height=22.465723500000017pt/>, and the bias matrix is zero. Then, we can use a single equation to represent the output of a given layer L.
 
 <p align="center"><img src="/tex/7b262a0b10ae8325622072f36a36c9ab.svg?invert_in_darkmode&sanitize=true" align=middle width=153.20212874999999pt height=16.0201668pt/></p>
 
