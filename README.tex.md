@@ -327,38 +327,7 @@ $$
 \frac{\partial C}{\partial B^L}=\frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial Z^L}\frac{\partial Z^L}{\partial B^L}
 $$
 
-The key is to understand that we can calculate $\frac{\partial C}{\partial A^L}$ easily only when $L$ is the output layer. Intuitively, you may be asking yourself: what if we could be able to write that derivative as function of $\frac{\partial C}{\partial A^o}$ which we know how to calculate?
 
-Alright, in fact that is the mechanism that characterize the backpropagation algorithm. We'll leverage Chain Rule one more time to expand the derivatives.
-
-$$
-\frac{\partial C}{\partial W^L}=\frac{\partial C}{\partial A^o} \frac{\partial A^L}{\partial Z^{L}}\frac{\partial Z^L}{\partial W^L}
-$$
-
-$$
-\frac{\partial C}{\partial B^L}=\frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial Z^L}\frac{\partial Z^L}{\partial B^L}
-$$
-
-
-$$
-\frac{\partial C}{\partial W^L}=\delta^LA^{L-1}
-$$
-
-$$
-\frac{\partial C}{\partial B^L}=\delta^L
-$$
-
-Finally, we have the generalized learning equations for any layer:
-
-$$
-W^L(t+1)=W^L(t)-\eta\delta^LA^{L-1}
-$$
-
-$$
-B^L(t+1)=B^L(t)-\eta\delta^L
-$$
-
-Once again, the Chain Rule is fundamental to understand MLPs. It provides us the mathematical tool implement the MLP backpropagation algorithm. Shortly, we can think that we are going to calculate the estimates output and the update the weights and biases depending on the error status. These two steps will be calculated until we consider the network trained.
 
 # Example MLP Library usage
 
