@@ -55,7 +55,7 @@ We are going to use the following notation across this article:
 * $Ŷ$: Estimated output vector. This vector represents the computed output of the Neural Network.
 * $Z^L$: Neuron Output vector before applying the activation function.
 * $A^L$: Neuron Output vector after applying the activation function.
-* $T$: Training Example: The tuple $T=<X,Y>$ defines a training example.
+* $T$: Training Example; The tuple $T=<X,Y>$ defines a training example.
 
 Let's write the equations for the particular case: 2-2-1 MLP.
 
@@ -145,7 +145,7 @@ $$
 
 ### Generalized Notation
 
-We can generalize the previous formulas to any neural network topology. We can assume that the weight matrix for the input layer is identity matrix $I$, and the bias matrix is zero. Then, we can use a single equation to represent the output of a given layer L.
+We can generalize the previous formulas to any neural network topology. We can assume that the weight matrix for the input layer is the identity matrix $I$, and the bias matrix is zero. Then, we can use a single equation to represent the output of a given layer L.
 
 $$
 Z^L = W^LA^{L-1}+B^L
@@ -159,10 +159,208 @@ $$
 A^L = \sigma(W^LA^{L-1}+B^L)
 $$
 
+# Backpropagation
+
+Backpropagation is the mechanism used to update the weights and bias starting from the output, and propagating through the other layers.
+
+Let's start applying the Stochastic Gradient Descent in the output layer.
+
+$$
+W^o(t+1) = W^o(t) - \eta\frac{\partial C}{\partial W^o}
+$$
+
+$$
+B^o(t+1) = B^o(t) - \eta\frac{\partial C}{\partial B^o}
+$$
+
+where,
+
+$$
+C = \|Y-Ŷ\|^2
+$$
+
+Applying the Chain Rule in the derivative, we have:
+
+$$
+\frac{\partial C}{\partial W^o} = \frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial W^o}
+$$
+
+$$
+\frac{\partial C}{\partial B^o} = \frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial B^o}
+$$
+
+Now, you should remember that $A^L = \sigma(Z^L)$, therefore we can apply the chain rule one more time. Then, we have:
+
+$$
+\frac{\partial C}{\partial W^o} = \frac{\partial C}{\partial A^o} \frac{\partial A^o}{\partial W^o} = \frac{\partial C}{\partial A^o} \frac{\partial A^o}{\partial Z^o} \frac{\partial Z^o}{\partial W^o}  
+$$
+
+$$
+\frac{\partial C}{\partial B^o} = \frac{\partial C}{\partial A^o} \frac{\partial A^o}{\partial B^o} = \frac{\partial C}{\partial A^o} \frac{\partial A^o}{\partial Z^o} \frac{\partial Z^o}{\partial B^o}  
+$$
+
+If you remember from vectorial calculus, you can notice that:
+
+$$
+\frac{\partial C}{\partial A^o} = \frac{\partial C(Y,Ŷ)}{\partial Ŷ} =\nabla{C}
+$$
+
+This is true because the cost function is scalar and the derivative of the Cost Function regarding each component $Ŷ$ is by definition the gradient of $C$.
+
+Moreover, we can draw the following simplifications:
+
+$$
+A^L = \sigma(Z^L) \rightarrow\frac{\partial A^L}{\partial Z^L} = \sigma'(Z^L )
+$$
+
+$$
+Z^L = W^LA^{L-1} + B^L
+$$
+
+$$
+z_i^L=\sum_{j=1}^{n} w_{ij}^L*a^{L-1}_{j}+b^L_i\rightarrow\frac{\partial z_i^L}{\partial w_{ij}^L}=\frac{\partial}{\partial w_{ij}^L}(\sum_{j=1}^{n} w_{ij}^L*a^{L-1}_{j}+b^L_i)=a^{L-1}_j 
+$$
+
+$$
+z_i^L=\sum_{j=1}^{n} w_{ij}^L*a^{L-1}_{j}+b^L_i\rightarrow\frac{\partial z_i^L}{\partial b_{i}^L}=\frac{\partial}{\partial b_{i}^L}(\sum_{j=1}^{n} w_{ij}^L*a^{L-1}_{j}+b^L_i)=1
+$$
+
+Using algebric matrix notation:
+
+$$
+\frac{\partial Z^L}{\partial W^L}=A^{L-1} 
+$$
+
+$$
+\frac{\partial Z^L}{\partial B^L}=1
+$$
+
+Applying the generic formulas above on the output layer, we have:
+
+$$
+\frac{\partial Z^o}{\partial W^o}=A^{h} 
+$$
+
+$$
+\frac{\partial Z^o}{\partial B^o}=1
+$$
+
+#### *Hadamard Product*
+
+Before we merge the equations into the learning equation (SGD), let me introduce you the *Hadamard Product* operator if you already are not familiar with it. So, we can present the eqaution on a more compact way.
+
+The *Hadamard Product*, symbol $\circ$, is an operation between two matrices of same dimension, that produces a matrix with the same dimension. The result matrix is the result of the multiplication of elements $i,j$ of the original matrices. Therefore, it is a element-wise multiplication between two matrices. For example:
+
+$$
+\begin{bmatrix}
+a_{11}&a_{12}\\
+a_{21}&a_{22} \\
+a_{31}&a_{32} 
+\end{bmatrix}
+\circ
+\begin{bmatrix}
+b_{11}&b_{12}\\
+b_{21}&b_{22} \\
+b_{31}&b_{32} 
+\end{bmatrix}
+=
+\begin{bmatrix}
+a_{11}b_{11}&a_{12}b_{12}\\
+a_{21}b_{21}&a_{21}b_{22} \\
+a_{31}b_{31}&a_{32}b_{32} 
+\end{bmatrix}
+$$
+
+#### Continuing with the mathematical formulation...
+
+$$
+\frac{\partial C}{\partial W^o}=\nabla C\circ\sigma'(Z^o)A^h
+$$
+
+$$
+\frac{\partial C}{\partial B^o}=\nabla C\circ\sigma'(Z^o)
+$$
+
+You might have noticed that the Chain Rule allowed us to write the derivatives above as a function of two terms:
+
+* The first term depends only on the output layer: $\nabla C\circ\sigma(Z^o)$.
+* The second term depends only on the previous layer output: $A^h$
+
+In other words, the chain rules enabled us to backpropagate the error, the first term, to the previous layer. We then can introduce a new term called delta:
+
+$$
+\delta^o=\nabla C\circ\sigma(Z^o)
+$$
+
+Therefore,
+
+$$
+\frac{\partial C}{\partial W^o}=\delta^oA^h
+$$
+
+$$
+\frac{\partial C}{\partial B^o}=\delta^o
+$$
+
+Then, we have the following learning equations for the output layer:
+
+$$
+W^o(t+1)=W^o(t)-\eta\delta^oA^{h}
+$$
+
+$$
+B^o(t+1)=B^o(t)-\eta\delta^o
+$$
+
+
+### Generalized Learning Equations
+
+We are now ready to generalize the equations for any neural network topology. 
+
+Starting from the derivatives, we have:
+
+$$
+\frac{\partial C}{\partial W^L}=\frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial Z^L}\frac{\partial Z^L}{\partial W^L}
+$$
+
+$$
+\frac{\partial C}{\partial B^L}=\frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial Z^L}\frac{\partial Z^L}{\partial B^L}
+$$
+
+The key is to understand that we can calculate $\frac{\partial C}{\partial A^L}$ easily only when $L$ is the output layer. Intuitively, you may be asking yourself: what if we could be able to write that derivative as function of $\frac{\partial C}{\partial A^o}$ which we know how to calculate?
+
+Alright, in fact that is the mechanism that characterize the backpropagation algorithm. We'll leverage Chain Rule one more time to expand the derivatives.
+
+$$
+\frac{\partial C}{\partial W^L}=\frac{\partial C}{\partial A^o} \frac{\partial A^L}{\partial Z^{L}}\frac{\partial Z^L}{\partial W^L}
+$$
+
+$$
+\frac{\partial C}{\partial B^L}=\frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial Z^L}\frac{\partial Z^L}{\partial B^L}
+$$
+
+
+$$
+\frac{\partial C}{\partial W^L}=\delta^LA^{L-1}
+$$
+
+$$
+\frac{\partial C}{\partial B^L}=\delta^L
+$$
+
+Finally, we have the generalized learning equations for any layer:
+
+$$
+W^L(t+1)=W^L(t)-\eta\delta^LA^{L-1}
+$$
+
+$$
+B^L(t+1)=B^L(t)-\eta\delta^L
+$$
+
+Once again, the Chain Rule is fundamental to understand MLPs. It provides us the mathematical tool implement the MLP backpropagation algorithm. Shortly, we can think that we are going to calculate the estimates output and the update the weights and biases depending on the error status. These two steps will be calculated until we consider the network trained.
 
 # Example MLP Library usage
-
-
 
 ## XOR Gate
 
