@@ -201,26 +201,7 @@ Starting from the derivatives, we have:
 
 <p align="center"><img src="/tex/ab539152ea96a13fafe2f05ecd6319d2.svg?invert_in_darkmode&sanitize=true" align=middle width=162.98860545pt height=36.22493325pt/></p>
 
-The key is to understand that we can calculate <img src="/tex/834af103ce7a0ff92a35477f70949bcb.svg?invert_in_darkmode&sanitize=true" align=middle width=26.289506099999997pt height=28.92634470000001pt/> easily only when <img src="/tex/ddcb483302ed36a59286424aa5e0be17.svg?invert_in_darkmode&sanitize=true" align=middle width=11.18724254999999pt height=22.465723500000017pt/> is the output layer. Intuitively, you may be asking yourself: what if we could be able to write that derivative as function of <img src="/tex/1c223dc72ead1e5363ade9018afc0c4b.svg?invert_in_darkmode&sanitize=true" align=middle width=24.211835999999995pt height=28.92634470000001pt/> which we know how to calculate?
 
-Alright, in fact that is the mechanism that characterize the backpropagation algorithm. We'll leverage Chain Rule one more time to expand the derivatives.
-
-<p align="center"><img src="/tex/ee2c7d645f0717f6da3e70ec9127d16b.svg?invert_in_darkmode&sanitize=true" align=middle width=169.4885742pt height=36.22493325pt/></p>
-
-<p align="center"><img src="/tex/ab539152ea96a13fafe2f05ecd6319d2.svg?invert_in_darkmode&sanitize=true" align=middle width=162.98860545pt height=36.22493325pt/></p>
-
-
-<p align="center"><img src="/tex/6fb74a3d7fe8ed8d07c63378c5335f5b.svg?invert_in_darkmode&sanitize=true" align=middle width=117.1211052pt height=33.81208709999999pt/></p>
-
-<p align="center"><img src="/tex/f79a0b8a2bb723941dc6b642a514a185.svg?invert_in_darkmode&sanitize=true" align=middle width=73.61064644999999pt height=33.81208709999999pt/></p>
-
-Finally, we have the generalized learning equations for any layer:
-
-<p align="center"><img src="/tex/f2a98a44175bab6b1e95763c93362885.svg?invert_in_darkmode&sanitize=true" align=middle width=227.75321415pt height=18.7598829pt/></p>
-
-<p align="center"><img src="/tex/e952f2e45aa0662a9d94d8171e8419ed.svg?invert_in_darkmode&sanitize=true" align=middle width=179.7279pt height=18.7598829pt/></p>
-
-Once again, the Chain Rule is fundamental to understand MLPs. It provides us the mathematical tool implement the MLP backpropagation algorithm. Shortly, we can think that we are going to calculate the estimates output and the update the weights and biases depending on the error status. These two steps will be calculated until we consider the network trained.
 
 # Example MLP Library usage
 
