@@ -20,7 +20,7 @@ Many of the concepts utilized in this articles are explained in the [Perceptron]
 
 # Topology 
 
-We'll start formulating a MLP with the topology 2-2-1 as shown in the picture below, then we'll generalize from this particular case.
+We'll start formulating a MLP with the topology 2-2-1 as shown in the picture billow, then we'll generalize from this particular case.
 
 The topology is composed of:
 
@@ -171,10 +171,10 @@ The *Hadamard Product*, symbol <img src="/tex/c0463eeb4772bfde779c20d52901d01b.s
 
 You might have noticed that the Chain Rule allowed us to write the derivatives above as a function of two terms:
 
-* The first term depends only on the output layer: <img src="/tex/d29683749fccfb0bd54b46e2962014d7.svg?invert_in_darkmode&sanitize=true" align=middle width=84.62435849999999pt height=24.65753399999998pt/>.
+* The first term depends only on the output layer: <img src="/tex/4bb7165719b2bb566b5ba50912d83107.svg?invert_in_darkmode&sanitize=true" align=middle width=89.23623389999999pt height=24.7161288pt/>.
 * The second term depends only on the previous layer output: <img src="/tex/2aaf50857a2f748cdb2ec38a570daded.svg?invert_in_darkmode&sanitize=true" align=middle width=20.02482569999999pt height=27.91243950000002pt/>
 
-In other words, the chain rules enabled us to backpropagate the error, the first term, to the previous layer. We then can introduce a new term called delta:
+Then we can introduce a new term called delta:
 
 <p align="center"><img src="/tex/a4aa6ca14c8b21155b7c3f2e40c247e3.svg?invert_in_darkmode&sanitize=true" align=middle width=121.78056pt height=16.438356pt/></p>
 
@@ -191,22 +191,229 @@ Then, we have the following learning equations for the output layer:
 <p align="center"><img src="/tex/07716b37e364b0824a5001b92261821b.svg?invert_in_darkmode&sanitize=true" align=middle width=172.13869859999997pt height=16.438356pt/></p>
 
 
-### Generalized Learning Equations
+### Learning Equations Hidden Layer
 
 We are now ready to generalize the equations for any neural network topology. 
 
-Starting from the derivatives, we have:
+Starting from the following derivative, we have:
 
-<p align="center"><img src="/tex/ddd4f883afde2e21e3fa8585812dcbbc.svg?invert_in_darkmode&sanitize=true" align=middle width=172.01831295pt height=36.22493325pt/></p>
+<p align="center"><img src="/tex/712925fd42ad889d3948ec661c510caf.svg?invert_in_darkmode&sanitize=true" align=middle width=166.7291241pt height=36.35277855pt/></p>
 
-<p align="center"><img src="/tex/ab539152ea96a13fafe2f05ecd6319d2.svg?invert_in_darkmode&sanitize=true" align=middle width=162.98860545pt height=36.22493325pt/></p>
+Wan calculate the total cost in terms of the contribution of each neuron in the hidden layer. So, you can think that each neuron in the hidden layer contributes partially to each one of the output neurons. This relation can be expressed as: 
+
+<p align="center"><img src="/tex/b2ecb9751747980e4d8e745642c1f3ab.svg?invert_in_darkmode&sanitize=true" align=middle width=210.1362087pt height=26.2701483pt/></p>
+
+<p align="center"><img src="/tex/bdbb92c3a9a341c429f6d21cc65d5a4b.svg?invert_in_darkmode&sanitize=true" align=middle width=230.27624070000002pt height=33.81208709999999pt/></p>
 
 
+<p align="center"><img src="/tex/dc23255cd31ab8e40016125fcdcd349f.svg?invert_in_darkmode&sanitize=true" align=middle width=133.55857185pt height=33.81208709999999pt/></p>
+
+Applying chain rule inside the sum we have:
+
+
+<p align="center"><img src="/tex/ea9e0e9245bbbc8930717d42ce694faa.svg?invert_in_darkmode&sanitize=true" align=middle width=272.51680995pt height=36.35277855pt/></p>
+
+
+Remember that:
+
+<p align="center"><img src="/tex/0c28b46369c9a449f0325697bfd4818e.svg?invert_in_darkmode&sanitize=true" align=middle width=180.90632505pt height=22.6293837pt/></p>
+
+The following equation represents the change rate of each of the weights connecting a hidden neuron to a output neuron 
+<p align="center"><img src="/tex/17da57bfd9b2f0fd21f7322657806486.svg?invert_in_darkmode&sanitize=true" align=middle width=80.8367835pt height=33.81208709999999pt/></p>
+
+Then we have:
+
+<p align="center"><img src="/tex/f905ae3351411d7944279c769ca41647.svg?invert_in_darkmode&sanitize=true" align=middle width=398.3667666pt height=36.35277855pt/></p>
+
+Notice that the term:
+
+<p align="center"><img src="/tex/2475ca5731e2cb95dbdbc45d21110cb3.svg?invert_in_darkmode&sanitize=true" align=middle width=183.08744025pt height=26.301595649999996pt/></p>
+
+Therefore, we can say that updating the weights of a given layer always yields to:
+
+
+<p align="center"><img src="/tex/f2a98a44175bab6b1e95763c93362885.svg?invert_in_darkmode&sanitize=true" align=middle width=227.75321415pt height=18.7598829pt/></p>
+
+<p align="center"><img src="/tex/e952f2e45aa0662a9d94d8171e8419ed.svg?invert_in_darkmode&sanitize=true" align=middle width=179.7279pt height=18.7598829pt/></p>
+
+Algorithmically speaking, we should execute the following steps:
+
+1. Calculate the NN output for the current weights configuration.
+2. Calculate the prediction error using the output and the test example.
+3. Starting from the last hidden layer calculate the deltas iteratively.
+4. Apply the Learning Equations and update the weights and biases.
+5. Repeat until the NN converges
+
+# Python Code explained
+
+The segmented the implementation in three different functions:
+
+1. Calculate the NN output for the current weights configuration.
+   
+```python
+   def update_neuron_outputs(self, x):
+      
+      self.a[0] = x
+
+      for layer, w_i in enumerate(self.w):
+         
+         # self.w doesn't consider the input layer, so add 1.
+         # We want to update the neuron ouput of the layer(l),
+         # so we calculate the activation output using inputs from (l-1) layer
+         # and beta from the lth layer.
+         output_index = layer + 1
+        
+         # print("layer: {}, dim(wi): {}, dim(a): {}, dim(beta): {}".format(layer, w_i.shape, self.a[layer].shape, self.beta[layer].shape))
+
+         # *** beta is indexed as W - we do not consider the
+         # input layer weights (Indentity Matrix) neither the beta
+         # from the input layer.
+         z = np.matmul(w_i, self.a[layer]) + self.beta[layer] 
+         
+         # apply activation function (default is sigmoide)  
+         self.a[output_index] = self.apply_activation_function(z)
+         self.d_a[output_index] = self.apply_d_activation_function(z)
+```
+
+2. Calculate the prediction error using the output and the test example.
+   
+   Note: `(self.cost).gradient` is a function that calculates $Y-Ŷ$\
+   Note: `self.d_a` is the numeric derivative of the sigmoid function. 
+```python
+
+   def update_error_out_layer(self, y):
+
+      gradient = (self.cost).gradient(self.a[-1], y)
+
+      # calculate the error in the output layer 
+      # Apply activation function derivative using Hadamard product operation
+      self.delta[-1] = gradient * self.d_a[-1] 
+      self.sqerror += ((self.cost).fn(self.a[-1], y) + 
+                        self.regularization.fn(self.reg_lmbda, self.n_weights, self.w))
+```
+
+3. Starting from the last hidden layer calculate the deltas iteratively.
+   
+```python
+   def backpropagate(self):
+
+      output_layer = len(self.w)-1
+      
+      # loop from [output_layer-1 ... 0]
+      # Remember Layer 0 in the W array is the first hidden layer
+      for l in range(output_layer, 0, -1):
+         self.delta[l] = np.matmul(self.w[l].T, self.delta[l+1])*self.d_a[l]
+
+```
+
+4. Apply the Learning Equations and update the weights and biases.
+
+NOTE: We provide a way to optionally use Regularization in order to enhance the learning process.
+
+```python
+ def apply_learning_equation(self):
+
+      output_layer = len(self.w)-1
+      d_regularization = self.regularization.df(self.reg_lmbda, self.n_weights, self.w)
+
+      # loop from [output_layer ... 1]
+      # Remember Layer 0 in the W array is the first hidden layer
+      for l in range(output_layer, -1, -1):  
+         n_w, n_beta = self.calculate_update_step(l)
+
+         self.w[l] = self.w[l] - self.eta*n_w - self.eta*d_regularization[l]       
+         self.beta[l] = self.beta[l] - self.eta*n_beta
+```
 
 # Example MLP Library usage
 
 ## XOR Gate
 
+
+```python
+
+   print("MLP Test usin XOR gate")   
+
+   filename = "XOR.dat"
+
+   '''
+      @dataset: array of arrays
+               [  [x1, x1, x2, ..., xn, y],
+                  [x1, x1, x2, ..., xn, y], 
+                  [x1, x1, x2, ..., xn, y] ]
+   '''
+   dataset = np.loadtxt(open(filename, "rb"), delimiter=" ")
+  
+   input_size = dataset.shape[1] - 1
+   output_size = 1
+
+   nn_size = [input_size, 2, output_size]
+
+   print("DataSet: {}".format(dataset))
+   print("NN SIZE {}".format(nn_size))
+
+   #Construct the Neural Network
+   mlp = NeuralNetwork(layer_size=nn_size, debug_string=True)
+   
+   #Train the Neural Network
+   mlp.train(dataset, eta=0.1, threshold=1e-3, max_iterations=100000)
+
+   print(mlp)
+
+   #Classify using the trained model
+   x = np.array([0,0])
+   outputs, output = mlp.classify(x)
+   print("==========================")
+   # print("Z: {}".format(outputs))
+   print("x: {}, ŷ: {}".format(x, output))
+```
 ## Iris UCI
 
+The Iris examples uses mini-batch gradient descent. Mini batch gradient descent 
+accumulates the gradient descent and increment step through batch examples.
+So, the learning equation is applied Apply at the end of the batch iteration using the accumulated deltas and steps.
+
+```python
+   print("MLP Test using IRIS Data Set")   
+
+   filename = "iris.data"
+
+   # Load Data Set
+   dataset = np.loadtxt(open(filename, "rb"), delimiter=",")
+
+   output_size = 3
+   input_size = dataset.shape[1] - output_size
+
+   print("======= Dataset =========\n{}".format(dataset))
+   
+   max_col = np.amax(dataset, axis=0)
+   min_col = np.amin(dataset, axis=0)
+
+   dataset = (dataset-min_col)/(max_col - min_col)
+
+   print("MAX: {}, MIN: {}".format(max_col, min_col))
+
+   #Neural Network topology
+   nn_size = [input_size, 3, output_size]
+
+   #Construct the Neural Network
+   mlp = NeuralNetwork(layer_size=nn_size, debug_string=True)
+
+   batch_size = 10
+
+   #Train using mini-batch of size 10.
+   mlp.train_batch(dataset, batch_size=batch_size, eta=0.05, threshold=1e-3)
+   # mlp.train(dataset, eta=0.05, threshold=1e-3)
+
+   a, y = mlp.classify(dataset[63][0:input_size])
+   print("Y: {}, Ŷ: {}".format(dataset[63][-(input_size-1):], np.round(y)))
+
+   a, y = mlp.classify(dataset[0][0:input_size])
+   print("Y: {}, Ŷ: {}".format(dataset[0][-(input_size-1):], np.round(y)))
+
+   a, y = mlp.classify(dataset[110][0:input_size])
+   print("Y: {}, Ŷ: {}".format(dataset[110][-(input_size-1):], np.round(y)))
+```
 ## MNNIST
+
+See the file `mnist-test.py` for more details. This example trains the neural network using k-fold cross validation in order to increase robustness to unseen data inputs. K-fold separates the data set in two folds, one is called training fold and the other validation. These folds are used in rounds. For example, in 10-fold we split the dataset in 10 folds, and we run the model training in rounds multiples of 10. Each step we peek a different fold as the validation fold. This approach tries to expose the model to unseed data.
