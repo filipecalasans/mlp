@@ -201,12 +201,12 @@ Starting from the following derivative, we have:
 
 Wan calculate the total cost in terms of the contribution of each neuron in the hidden layer. So, you can think that each neuron in the hidden layer contributes partially to each one of the output neurons. This relation can be expressed as: 
 
-<p align="center"><img src="/tex/b2ecb9751747980e4d8e745642c1f3ab.svg?invert_in_darkmode&sanitize=true" align=middle width=210.1362087pt height=26.2701483pt/></p>
+<p align="center"><img src="/tex/adbc0c1fd22aa78645146f8f758323a6.svg?invert_in_darkmode&sanitize=true" align=middle width=230.27624070000002pt height=33.81208709999999pt/></p>
 
 <p align="center"><img src="/tex/bdbb92c3a9a341c429f6d21cc65d5a4b.svg?invert_in_darkmode&sanitize=true" align=middle width=230.27624070000002pt height=33.81208709999999pt/></p>
 
 
-<p align="center"><img src="/tex/dc23255cd31ab8e40016125fcdcd349f.svg?invert_in_darkmode&sanitize=true" align=middle width=133.55857185pt height=33.81208709999999pt/></p>
+<p align="center"><img src="/tex/53334124b84288029dfae91a745a106c.svg?invert_in_darkmode&sanitize=true" align=middle width=128.0791281pt height=33.81208709999999pt/></p>
 
 Applying chain rule inside the sum we have:
 
