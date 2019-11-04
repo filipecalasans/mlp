@@ -472,7 +472,7 @@ NOTE: We provide a way to optionally use Regularization in order to enhance the 
          self.beta[l] = self.beta[l] - self.eta*n_beta
 ```
 
-# Example MLP Library usage
+# Examples of the library usage
 
 ## XOR Gate
 
@@ -516,9 +516,9 @@ NOTE: We provide a way to optionally use Regularization in order to enhance the 
 ```
 ## Iris UCI
 
-The Iris examples uses mini-batch gradient descent. Mini batch gradient descent 
+The Iris example uses mini-batch gradient descent. Mini batch gradient descent 
 accumulates the gradient descent and increment step through batch examples.
-So, the learning equation is applied Apply at the end of the batch iteration using the accumulated deltas and steps.
+So, the learning equation is applied only at the end of the batch iteration using the accumulated errors and steps.
 
 ```python
    print("MLP Test using IRIS Data Set")   
@@ -563,4 +563,4 @@ So, the learning equation is applied Apply at the end of the batch iteration usi
 ```
 ## MNNIST
 
-See the file `mnist-test.py` for more details. This example trains the neural network using k-fold cross validation in order to increase robustness to unseen data inputs. K-fold separates the data set in two folds, one is called training fold and the other validation. These folds are used in rounds. For example, in 10-fold we split the dataset in 10 folds, and we run the model training in rounds multiples of 10. Each step we peek a different fold as the validation fold. This approach tries to expose the model to unseed data.
+See the file `mnist-test.py` for more details. This example trains the neural network using k-fold cross validation in order to increase robustness to unseen data inputs. K-fold separates the data set in two folds, one is called training fold and the other validation. These folds are used in rounds. For example, in 10-fold we split the dataset in 10 folds, and we run the model training in rounds multiples of 10. Each step we peek a different fold as the validation fold and use the other 9 as training examples. This approach tries to increase the model exposure to unseen data, therefore increasing the model robustness.
