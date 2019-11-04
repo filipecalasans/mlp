@@ -216,21 +216,21 @@ Applying chain rule inside the sum we have:
 
 Remember that:
 
-<p align="center"><img src="/tex/0c28b46369c9a449f0325697bfd4818e.svg?invert_in_darkmode&sanitize=true" align=middle width=180.90632505pt height=22.6293837pt/></p>
+<p align="center"><img src="/tex/553adacf0f305d836cf8d4c1e810bc13.svg?invert_in_darkmode&sanitize=true" align=middle width=180.90632505pt height=22.6293837pt/></p>
 
 The following equation represents the change rate of each of the weights connecting a hidden neuron to a output neuron 
 <p align="center"><img src="/tex/17da57bfd9b2f0fd21f7322657806486.svg?invert_in_darkmode&sanitize=true" align=middle width=80.8367835pt height=33.81208709999999pt/></p>
 
 Then we have:
 
-<p align="center"><img src="/tex/f905ae3351411d7944279c769ca41647.svg?invert_in_darkmode&sanitize=true" align=middle width=398.3667666pt height=36.35277855pt/></p>
+<p align="center"><img src="/tex/8ff324104c2f77f25ceb072254d29d59.svg?invert_in_darkmode&sanitize=true" align=middle width=382.97472015pt height=36.35277855pt/></p>
 
 Notice that the term:
 
-<p align="center"><img src="/tex/2475ca5731e2cb95dbdbc45d21110cb3.svg?invert_in_darkmode&sanitize=true" align=middle width=183.08744025pt height=26.301595649999996pt/></p>
+<p align="center"><img src="/tex/f26e80e7885573ca59f59df35e5d1f4a.svg?invert_in_darkmode&sanitize=true" align=middle width=175.39141784999998pt height=26.301595649999996pt/></p>
 
 Therefore, we can say that updating the weights of a given layer always yields to:
-
+<p align="center"><img src="/tex/64bf228522334aff24df7b6083914e19.svg?invert_in_darkmode&sanitize=true" align=middle width=183.53323394999998pt height=18.7598829pt/></p>
 
 <p align="center"><img src="/tex/f2a98a44175bab6b1e95763c93362885.svg?invert_in_darkmode&sanitize=true" align=middle width=227.75321415pt height=18.7598829pt/></p>
 
