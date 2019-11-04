@@ -325,7 +325,7 @@ NOTE: We provide a way to optionally use Regularization in order to enhance the 
          self.beta[l] = self.beta[l] - self.eta*n_beta
 ```
 
-# Examples of the library usage
+# Examples of How to use this Library
 
 ## XOR Gate
 
