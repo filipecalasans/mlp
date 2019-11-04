@@ -323,7 +323,7 @@ $$
 \frac{\partial C}{\partial W^h}=\frac{\partial C}{\partial A^h} \frac{\partial A^h}{\partial Z^h}\frac{\partial Z^h}{\partial W^h}
 $$
 
-Wan calculate the total cost in terms of the contribution of each neuron in the hidden layer. So, you can think that each neuron in the hidden layer contributes partially to each one of the output neurons. This relation can be expressed as: 
+We can calculate the total cost in terms of the contribution of each neuron in the hidden layer. So, you can think that each neuron in the hidden layer contributes partially to each one of the output neurons. This relation can be expressed as: 
 
 $$
 \frac{\partial C_{TOTAL}}{\partial A^{h1}} = \frac{\partial C_{o1}}{\partial A^{h1}} + \frac{\partial C_{o2}}{\partial A^{h1}} + ...
