@@ -404,7 +404,7 @@ class NeuralNetwork(object):
 
    def accumulate_and_apply_learning(self):
       '''
-         accumulate the gradient descent and increment step throught batch examples.
+         accumulate the gradient descent and increment step through batch examples.
          Apply the minibatch gradient descent equation at the end of the batch iteration.
 
          implementation of batch/minibatch Gradient Descent Algorithm.

@@ -283,10 +283,10 @@ $$
 
 You might have noticed that the Chain Rule allowed us to write the derivatives above as a function of two terms:
 
-* The first term depends only on the output layer: $\nabla C\circ\sigma(Z^o)$.
+* The first term depends only on the output layer: $\nabla C\circ\sigma'(Z^o)$.
 * The second term depends only on the previous layer output: $A^h$
 
-In other words, the chain rules enabled us to backpropagate the error, the first term, to the previous layer. We then can introduce a new term called delta:
+Then we can introduce a new term called delta:
 
 $$
 \delta^o=\nabla C\circ\sigma(Z^o)
@@ -313,26 +313,254 @@ B^o(t+1)=B^o(t)-\eta\delta^o
 $$
 
 
-### Generalized Learning Equations
+### Learning Equations Hidden Layer
 
 We are now ready to generalize the equations for any neural network topology. 
 
-Starting from the derivatives, we have:
+Starting from the following derivative, we have:
 
 $$
-\frac{\partial C}{\partial W^L}=\frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial Z^L}\frac{\partial Z^L}{\partial W^L}
+\frac{\partial C}{\partial W^h}=\frac{\partial C}{\partial A^h} \frac{\partial A^h}{\partial Z^h}\frac{\partial Z^h}{\partial W^h}
+$$
+
+Wan calculate the total cost in terms of the contribution of each neuron in the hidden layer. So, you can think that each neuron in the hidden layer contributes partially to each one of the output neurons. This relation can be expressed as: 
+
+$$
+
+\frac{\partial C_{TOTAL}}{\partial A^{h1}} = \frac{\partial C_{o1}}{\partial A^{h1}} + \frac{\partial C_{o2}}{\partial A^{h1}} + ...
 $$
 
 $$
-\frac{\partial C}{\partial B^L}=\frac{\partial C}{\partial A^L} \frac{\partial A^L}{\partial Z^L}\frac{\partial Z^L}{\partial B^L}
+\frac{\partial C_{TOTAL}}{\partial A^{h2}} = \frac{\partial C_{o1}}{\partial A^{h2}} + \frac{\partial C_{o2}}{\partial A^{h2}} + ...
+
 $$
 
 
+$$
+\frac{\partial C}{\partial W^h} = (\sum{\frac{ \partial C_{o}}{\partial A^h}})
+$$
+
+Applying chain rule inside the sum we have:
+
+
+$$
+\frac{\partial C}{\partial W^h} = (\sum{\frac{ \partial C_{o}}{\partial A^o} \frac{ \partial A^{o}}{\partial Z^o} \frac{ \partial Z^{o}}{\partial A^h}}) \frac{\partial A^h}{\partial Z^h} \frac{\partial Z^h}{\partial W^h}
+$$
+
+
+Remember that:
+
+$$
+
+\frac{ \partial C_{o}}{\partial A^o} \frac{ \partial A^{o}}{\partial Z^o} = \nabla C\circ\sigma'(Z^o) = \delta^o
+$$
+
+The following equation represents the change rate of each of the weights connecting a hidden neuron to a output neuron 
+$$
+\frac{ \partial Z^{o}}{\partial A^h} = w^{h0}
+$$
+
+Then we have:
+
+$$
+\frac{\partial C}{\partial W^h} = (\sum{\delta^o w^{ho}}) \frac{\partial A^h}{\partial Z^h} \frac{\partial Z^h}{\partial W^h} = (\sum{\delta^o w^{ho}}) \circ \sigma'(Z^h) X
+$$
+
+Notice that the term:
+
+$$
+(\sum{\delta^o w^{ho}}) \circ \sigma'(Z^h)= \delta^h
+$$
+
+Therefore, we can say that updating the weights of a given layer always yields to:
+
+
+$$
+W^L(t+1)=W^L(t)-\eta\delta^LA^{L-1}
+$$
+
+$$
+B^L(t+1)=B^L(t)-\eta\delta^L
+$$
+
+Algorithmically speaking, we should execute the following steps:
+
+1. Calculate the NN output for the current weights configuration.
+2. Calculate the prediction error using the output and the test example.
+3. Starting from the last hidden layer calculate the deltas iteratively.
+4. Apply the Learning Equations and update the weights and biases.
+5. Repeat until the NN converges
+
+# Python Code explained
+
+The segmented the implementation in three different functions:
+
+1. Calculate the NN output for the current weights configuration.
+   
+```python
+   def update_neuron_outputs(self, x):
+      
+      self.a[0] = x
+
+      for layer, w_i in enumerate(self.w):
+         
+         # self.w doesn't consider the input layer, so add 1.
+         # We want to update the neuron ouput of the layer(l),
+         # so we calculate the activation output using inputs from (l-1) layer
+         # and beta from the lth layer.
+         output_index = layer + 1
+        
+         # print("layer: {}, dim(wi): {}, dim(a): {}, dim(beta): {}".format(layer, w_i.shape, self.a[layer].shape, self.beta[layer].shape))
+
+         # *** beta is indexed as W - we do not consider the
+         # input layer weights (Indentity Matrix) neither the beta
+         # from the input layer.
+         z = np.matmul(w_i, self.a[layer]) + self.beta[layer] 
+         
+         # apply activation function (default is sigmoide)  
+         self.a[output_index] = self.apply_activation_function(z)
+         self.d_a[output_index] = self.apply_d_activation_function(z)
+```
+
+2. Calculate the prediction error using the output and the test example.
+   
+   Note: `(self.cost).gradient` is a function that calculates $Y-Ŷ$\
+   Note: `self.d_a` is the numeric derivative of the sigmoid function. 
+```python
+
+   def update_error_out_layer(self, y):
+
+      gradient = (self.cost).gradient(self.a[-1], y)
+
+      # calculate the error in the output layer 
+      # Apply activation function derivative using Hadamard product operation
+      self.delta[-1] = gradient * self.d_a[-1] 
+      self.sqerror += ((self.cost).fn(self.a[-1], y) + 
+                        self.regularization.fn(self.reg_lmbda, self.n_weights, self.w))
+```
+
+3. Starting from the last hidden layer calculate the deltas iteratively.
+   
+```python
+   def backpropagate(self):
+
+      output_layer = len(self.w)-1
+      
+      # loop from [output_layer-1 ... 0]
+      # Remember Layer 0 in the W array is the first hidden layer
+      for l in range(output_layer, 0, -1):
+         self.delta[l] = np.matmul(self.w[l].T, self.delta[l+1])*self.d_a[l]
+
+```
+
+4. Apply the Learning Equations and update the weights and biases.
+
+NOTE: We provide a way to optionally use Regularization in order to enhance the learning process.
+
+```python
+ def apply_learning_equation(self):
+
+      output_layer = len(self.w)-1
+      d_regularization = self.regularization.df(self.reg_lmbda, self.n_weights, self.w)
+
+      # loop from [output_layer ... 1]
+      # Remember Layer 0 in the W array is the first hidden layer
+      for l in range(output_layer, -1, -1):  
+         n_w, n_beta = self.calculate_update_step(l)
+
+         self.w[l] = self.w[l] - self.eta*n_w - self.eta*d_regularization[l]       
+         self.beta[l] = self.beta[l] - self.eta*n_beta
+```
 
 # Example MLP Library usage
 
 ## XOR Gate
 
+
+```python
+
+   print("MLP Test usin XOR gate")   
+
+   filename = "XOR.dat"
+
+   '''
+      @dataset: array of arrays
+               [  [x1, x1, x2, ..., xn, y],
+                  [x1, x1, x2, ..., xn, y], 
+                  [x1, x1, x2, ..., xn, y] ]
+   '''
+   dataset = np.loadtxt(open(filename, "rb"), delimiter=" ")
+  
+   input_size = dataset.shape[1] - 1
+   output_size = 1
+
+   nn_size = [input_size, 2, output_size]
+
+   print("DataSet: {}".format(dataset))
+   print("NN SIZE {}".format(nn_size))
+
+   #Construct the Neural Network
+   mlp = NeuralNetwork(layer_size=nn_size, debug_string=True)
+   
+   #Train the Neural Network
+   mlp.train(dataset, eta=0.1, threshold=1e-3, max_iterations=100000)
+
+   print(mlp)
+
+   #Classify using the trained model
+   x = np.array([0,0])
+   outputs, output = mlp.classify(x)
+   print("==========================")
+   # print("Z: {}".format(outputs))
+   print("x: {}, ŷ: {}".format(x, output))
+```
 ## Iris UCI
 
+The Iris examples uses mini-batch gradient descent. Mini batch gradient descent 
+accumulates the gradient descent and increment step through batch examples.
+So, the learning equation is applied Apply at the end of the batch iteration using the accumulated deltas and steps.
+
+```python
+   print("MLP Test using IRIS Data Set")   
+
+   filename = "iris.data"
+
+   # Load Data Set
+   dataset = np.loadtxt(open(filename, "rb"), delimiter=",")
+
+   output_size = 3
+   input_size = dataset.shape[1] - output_size
+
+   print("======= Dataset =========\n{}".format(dataset))
+   
+   max_col = np.amax(dataset, axis=0)
+   min_col = np.amin(dataset, axis=0)
+
+   dataset = (dataset-min_col)/(max_col - min_col)
+
+   print("MAX: {}, MIN: {}".format(max_col, min_col))
+
+   #Neural Network topology
+   nn_size = [input_size, 3, output_size]
+
+   #Construct the Neural Network
+   mlp = NeuralNetwork(layer_size=nn_size, debug_string=True)
+
+   batch_size = 10
+
+   #Train using mini-batch of size 10.
+   mlp.train_batch(dataset, batch_size=batch_size, eta=0.05, threshold=1e-3)
+   # mlp.train(dataset, eta=0.05, threshold=1e-3)
+
+   a, y = mlp.classify(dataset[63][0:input_size])
+   print("Y: {}, Ŷ: {}".format(dataset[63][-(input_size-1):], np.round(y)))
+
+   a, y = mlp.classify(dataset[0][0:input_size])
+   print("Y: {}, Ŷ: {}".format(dataset[0][-(input_size-1):], np.round(y)))
+
+   a, y = mlp.classify(dataset[110][0:input_size])
+   print("Y: {}, Ŷ: {}".format(dataset[110][-(input_size-1):], np.round(y)))
+```
 ## MNNIST
+
+See the file `mnist-test.py` for more details. This example trains the neural network using k-fold cross validation in order to increase robustness to unseen data inputs. K-fold separates the data set in two folds, one is called training fold and the other validation. These folds are used in rounds. For example, in 10-fold we split the dataset in 10 folds, and we run the model training in rounds multiples of 10. Each step we peek a different fold as the validation fold. This approach tries to expose the model to unseed data.
