@@ -263,8 +263,6 @@ The segmented the implementation in three different functions:
          # and beta from the lth layer.
          output_index = layer + 1
         
-         # print("layer: {}, dim(wi): {}, dim(a): {}, dim(beta): {}".format(layer, w_i.shape, self.a[layer].shape, self.beta[layer].shape))
-
          # *** beta is indexed as W - we do not consider the
          # input layer weights (Indentity Matrix) neither the beta
          # from the input layer.
