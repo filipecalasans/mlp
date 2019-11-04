@@ -20,7 +20,7 @@ Many of the concepts utilized in this articles are explained in the [Perceptron]
 
 # Topology 
 
-We'll start formulating a MLP with the topology 2-2-1 as shown in the picture billow, then we'll generalize from this particular case.
+We'll start formulating a MLP with the topology 2-2-1 as shown in the picture below, then we'll generalize from this particular case.
 
 The topology is composed of:
 
