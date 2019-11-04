@@ -352,7 +352,7 @@ Remember that:
 
 $$
 
-\frac{ \partial C_{o}}{\partial A^o} \frac{ \partial A^{o}}{\partial Z^o} = \nabla C\circ\sigma'(Z^o) = \delta^o
+\frac{ \partial C_o}{\partial A^o} \frac{ \partial A^{o}}{\partial Z^o} = \nabla C\circ\sigma'(Z^o) = \delta^o
 $$
 
 The following equation represents the change rate of each of the weights connecting a hidden neuron to a output neuron 
@@ -363,17 +363,19 @@ $$
 Then we have:
 
 $$
-\frac{\partial C}{\partial W^h} = (\sum{\delta^o w^{ho}}) \frac{\partial A^h}{\partial Z^h} \frac{\partial Z^h}{\partial W^h} = (\sum{\delta^o w^{ho}}) \circ \sigma'(Z^h) X
+\frac{\partial C}{\partial W^h} = (\sum{\delta^o w^{o}}) \frac{\partial A^h}{\partial Z^h} \frac{\partial Z^h}{\partial W^h} = (\sum{\delta^o w^{o}}) \circ \sigma'(Z^h) X
 $$
 
 Notice that the term:
 
 $$
-(\sum{\delta^o w^{ho}}) \circ \sigma'(Z^h)= \delta^h
+(\sum{\delta^o w^{o}}) \circ \sigma'(Z^h)= \delta^h 
 $$
 
 Therefore, we can say that updating the weights of a given layer always yields to:
-
+$$
+\delta^L = W^{L+1} \delta^{L+1} \circ \sigma'(Z^L)
+$$
 
 $$
 W^L(t+1)=W^L(t)-\eta\delta^LA^{L-1}
