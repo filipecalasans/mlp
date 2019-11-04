@@ -199,7 +199,7 @@ Starting from the following derivative, we have:
 
 <p align="center"><img src="/tex/712925fd42ad889d3948ec661c510caf.svg?invert_in_darkmode&sanitize=true" align=middle width=166.7291241pt height=36.35277855pt/></p>
 
-Wan calculate the total cost in terms of the contribution of each neuron in the hidden layer. So, you can think that each neuron in the hidden layer contributes partially to each one of the output neurons. This relation can be expressed as: 
+We can calculate the total cost in terms of the contribution of each neuron in the hidden layer. So, you can think that each neuron in the hidden layer contributes partially to each one of the output neurons. This relation can be expressed as: 
 
 <p align="center"><img src="/tex/adbc0c1fd22aa78645146f8f758323a6.svg?invert_in_darkmode&sanitize=true" align=middle width=230.27624070000002pt height=33.81208709999999pt/></p>
 
