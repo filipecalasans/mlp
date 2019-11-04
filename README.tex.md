@@ -326,7 +326,6 @@ $$
 Wan calculate the total cost in terms of the contribution of each neuron in the hidden layer. So, you can think that each neuron in the hidden layer contributes partially to each one of the output neurons. This relation can be expressed as: 
 
 $$
-
 \frac{\partial C_{TOTAL}}{\partial A^{h1}} = \frac{\partial C_{o1}}{\partial A^{h1}} + \frac{\partial C_{o2}}{\partial A^{h1}} + ...
 $$
 
@@ -337,7 +336,7 @@ $$
 
 
 $$
-\frac{\partial C}{\partial W^h} = (\sum{\frac{ \partial C_{o}}{\partial A^h}})
+\frac{\partial C}{\partial A^h} = (\sum{\frac{ \partial C_{o}}{\partial A^h}})
 $$
 
 Applying chain rule inside the sum we have:
